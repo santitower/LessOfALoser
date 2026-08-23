@@ -5,4 +5,5 @@ DerivedData/
 xcuserdata/
 *.xccheckout
 *.xcscmblueprint
-
+__pycache__/
+*.pyc

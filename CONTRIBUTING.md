@@ -7,7 +7,7 @@ Thanks for contributing to PhoneLLM.
 1. Branch from `main`.
 2. Keep changes focused and explain any privacy or safety implications.
 3. Add or update tests for deterministic calculations.
-4. Run `swift test` before opening a pull request.
+4. Run `swift test` and `python3 -m unittest discover -s desktop_gateway/tests -v` before opening a pull request.
 5. Use synthetic data in tests, screenshots, logs, and issues.
 
 ## Never commit

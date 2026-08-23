@@ -9,6 +9,7 @@ final class WellnessViewModel {
     private let healthClient = HealthKitClient()
     private let screenTimeStore = SharedScreenTimeStore()
     private let coach = LocalWellnessCoach()
+    private let remoteCoach = RemoteWellnessCoach()
 
     var records: [DailyWellnessRecord] = []
     var briefing = CoachingBrief.welcome
@@ -16,6 +17,10 @@ final class WellnessViewModel {
     var errorMessage: String?
     var healthAuthorized = false
     var screenTimeAuthorized = false
+    var computerCoachURL = ""
+    var computerCoachStatus = "Not connected"
+    var isCheckingComputerCoach = false
+    var computerCoachEnabled = false
 
     var today: DailyWellnessRecord? {
         records.sorted { $0.date < $1.date }.last
@@ -27,6 +32,48 @@ final class WellnessViewModel {
 
     init() {
         screenTimeAuthorized = AuthorizationCenter.shared.authorizationStatus == .approved
+        if let configuration = RemoteCoachConfigurationStore.load() {
+            computerCoachURL = configuration.baseURL.absoluteString
+            computerCoachStatus = "Configured · tap Test Connection"
+            computerCoachEnabled = true
+        }
+    }
+
+    func connectComputerCoach() async {
+        guard !isCheckingComputerCoach else { return }
+        isCheckingComputerCoach = true
+        defer { isCheckingComputerCoach = false }
+
+        do {
+            let configuration = try RemoteCoachConfiguration.parse(computerCoachURL)
+            let health = try await remoteCoach.checkHealth(at: configuration)
+            RemoteCoachConfigurationStore.save(configuration)
+            computerCoachURL = configuration.baseURL.absoluteString
+            computerCoachStatus = "Connected · \(health.model)"
+            computerCoachEnabled = true
+            errorMessage = nil
+            await refresh()
+        } catch {
+            computerCoachStatus = "Connection failed"
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    func disconnectComputerCoach() async {
+        RemoteCoachConfigurationStore.remove()
+        computerCoachStatus = "Not connected"
+        computerCoachEnabled = false
+        await refresh()
+    }
+
+    func handleConnectionLink(_ url: URL) async {
+        do {
+            let configuration = try RemoteCoachConfiguration.parseConnectionLink(url)
+            computerCoachURL = configuration.baseURL.absoluteString
+            await connectComputerCoach()
+        } catch {
+            errorMessage = error.localizedDescription
+        }
     }
 
     func requestHealthAccess() async {
@@ -96,4 +143,3 @@ final class WellnessViewModel {
         return updated.sorted { $0.date < $1.date }
     }
 }
-
