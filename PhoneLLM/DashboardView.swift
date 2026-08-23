@@ -146,7 +146,7 @@ struct DashboardView: View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Today's Screen Time")
                 .font(.headline)
-            DeviceActivityReport(context: .dailyWellness, filter: reportFilter)
+            DeviceActivityReport(.dailyWellness, filter: reportFilter)
                 .frame(minHeight: 150)
             Text("The privacy-preserving report extension writes only the coarse daily total to the shared on-device container.")
                 .font(.caption)
