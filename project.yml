@@ -46,6 +46,8 @@ targets:
       - target: WellnessCore
       - target: ScreenTimeReport
         embed: true
+      - target: StreakWidget
+        embed: true
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.santitower.LessOfALoser
@@ -73,6 +75,8 @@ targets:
     dependencies:
       - target: WellnessCore
       - target: ScreenTimeReport
+        embed: true
+      - target: StreakWidget
         embed: true
       - package: coreai-models
         product: CoreAILM
@@ -117,6 +121,27 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.santitower.LessOfALoser.ScreenTimeReport
+        SKIP_INSTALL: true
+        APPLICATION_EXTENSION_API_ONLY: true
+
+  StreakWidget:
+    type: app-extension
+    platform: iOS
+    sources:
+      - StreakWidget
+    info:
+      path: StreakWidget/Info.plist
+      properties:
+        CFBundleDisplayName: LessOfALoser Streak
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    entitlements:
+      path: StreakWidget/StreakWidget.entitlements
+    dependencies:
+      - target: WellnessCore
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.santitower.LessOfALoser.StreakWidget
         SKIP_INSTALL: true
         APPLICATION_EXTENSION_API_ONLY: true
 

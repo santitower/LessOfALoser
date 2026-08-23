@@ -20,6 +20,10 @@ No personal health data belongs in this repository, and the starter contains no 
 - Privacy-preserving `DeviceActivityReportExtension`
 - Coarse daily Screen Time sharing through a local App Group container
 - 28-day baseline comparisons in the platform-independent `WellnessCore` module
+- A track-based streak/XP system: quests are scored against your own data and baseline, never manually checked off
+- A friend leaderboard synced through each person's own iCloud account via CloudKit — no third-party server. Only streak, XP, and track name sync; Health and Screen Time data never do
+- A Home Screen streak widget
+- An evening local notification if today's streak is still at risk — scoped to the streak itself, never to health data
 - On-device Foundation Models coaching with a deterministic fallback
 - Optional iOS 27 Core AI target for an exported Qwen 2.5 1.5B model
 - Swift unit tests and a GitHub Actions workflow
@@ -48,12 +52,15 @@ open LessOfALoser.xcodeproj
 
 In Xcode:
 
-1. Select your development team for the `PhoneLLM` and `ScreenTimeReport` targets.
+1. Select your development team for the `PhoneLLM`, `ScreenTimeReport`, and `StreakWidget` targets.
 2. Replace the `com.santitower` bundle prefix if you do not control it.
-3. Register the `group.com.santitower.LessOfALoser` App Group for both targets.
+3. Register the `group.com.santitower.LessOfALoser` App Group for all three targets.
 4. Enable HealthKit on the app target.
 5. Enable Family Controls on the app and report extension targets.
-6. Build to a physical iPhone and grant Health and Screen Time access.
+6. Enable iCloud with the CloudKit service on the `PhoneLLM` target (this provisions the default container the friend leaderboard reads and writes).
+7. Build to a physical iPhone and grant Health and Screen Time access, then add the Streak widget from the Home Screen widget gallery.
+
+Two people testing the friend leaderboard must both be signed into iCloud and both have run the app at least once so their `PlayerProfile` record exists before either can add the other's code.
 
 For distribution, request the Family Controls managed capability for both the app and report extension identifiers in the Apple Developer portal.
 
@@ -93,10 +100,11 @@ Every model receives aggregated JSON facts rather than raw HealthKit samples. If
 ## Project layout
 
 ```text
-PhoneLLM/                 SwiftUI app, HealthKit client, local coach
+PhoneLLM/                 SwiftUI app, HealthKit client, local coach, gamification UI
 ScreenTimeReport/         Device Activity report extension
+StreakWidget/             Home Screen widget showing the current streak
 Resources/CoreAI/         Local-only custom model resources (Git-ignored)
-Sources/WellnessCore/     Shared models, trend engine, local snapshot store
+Sources/WellnessCore/     Shared models, trend engine, gamification engine, local stores
 Tests/WellnessCoreTests/  Platform-independent tests
 docs/CORE_AI.md            Qwen/Core AI export and build instructions
 project.yml               XcodeGen project definition

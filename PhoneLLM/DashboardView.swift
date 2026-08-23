@@ -22,6 +22,7 @@ struct DashboardView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 18) {
+                    trustBadge
                     permissionCard
                     metricGrid
                     coachingCard
@@ -30,7 +31,7 @@ struct DashboardView: View {
                         screenTimeReport
                     }
 
-                    privacyCard
+                    safetyCard
                 }
                 .padding()
             }
@@ -64,12 +65,32 @@ struct DashboardView: View {
         }
     }
 
+    private var trustBadge: some View {
+        HStack(spacing: 14) {
+            Image(systemName: "lock.shield.fill")
+                .font(.title2)
+                .foregroundStyle(Color.accentColor)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Your health data stays here")
+                    .font(.subheadline.weight(.semibold))
+                Text("Sleep, steps, and Screen Time are never uploaded, stored remotely, or shared.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            Spacer()
+        }
+        .padding()
+        .background(Color.accentColor.opacity(0.12), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+    }
+
     private var permissionCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Label("Connect your data", systemImage: "lock.shield.fill")
+            Label("Connect your data", systemImage: "checkmark.shield")
                 .font(.headline)
 
-            Text("LessOfALoser requests read-only Health access and individual Screen Time access. Processing stays on this iPhone.")
+            Text("Grant read-only access to Health and Screen Time to generate your daily brief.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
 
@@ -155,7 +176,7 @@ struct DashboardView: View {
         .cardStyle()
     }
 
-    private var privacyCard: some View {
+    private var safetyCard: some View {
         Label(
             "General wellness only. LessOfALoser does not diagnose conditions, monitor emergencies, or recommend medication changes.",
             systemImage: "heart.text.square"
