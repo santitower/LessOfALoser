@@ -1,0 +1,36 @@
+{
+  "generatedAt": "2026-08-23T12:00:00Z",
+  "goals": {
+    "screenTimeMinutes": 180,
+    "sleepMinutes": 420,
+    "steps": 8000
+  },
+  "kind": "lessofaloser.wellness-export",
+  "records": [
+    {
+      "dataCoverage": 1,
+      "date": "2026-08-21T12:00:00Z",
+      "eveningScreenMinutes": 61,
+      "screenTimeMinutes": 184,
+      "sleepMinutes": 420,
+      "steps": 8100
+    },
+    {
+      "dataCoverage": 1,
+      "date": "2026-08-22T12:00:00Z",
+      "eveningScreenMinutes": 58,
+      "screenTimeMinutes": 176,
+      "sleepMinutes": 438,
+      "steps": 9200
+    },
+    {
+      "dataCoverage": 1,
+      "date": "2026-08-23T12:00:00Z",
+      "eveningScreenMinutes": 54,
+      "screenTimeMinutes": 162,
+      "sleepMinutes": 445,
+      "steps": 10125
+    }
+  ],
+  "schemaVersion": 1
+}
