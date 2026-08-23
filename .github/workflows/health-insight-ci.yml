@@ -1,0 +1,16 @@
+name: Health Insight standalone
+
+on:
+  push:
+    branches: [codex/health-insight-production]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: xcode-27
+    steps:
+      - uses: actions/checkout@v5
+      - name: Show Xcode toolchain
+        run: xcodebuild -version
+      - name: Validate standalone project
+        run: ./scripts/validate-project.sh

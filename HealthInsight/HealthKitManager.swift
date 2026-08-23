@@ -1,20 +1,6 @@
 import Foundation
 import HealthKit
 
-struct DayScore: Identifiable {
-    let id = UUID()
-    let date: Date
-    let dateLabel: String
-    let steps: Int
-    let calories: Double
-    let sleepHours: Double
-
-    var stepsGoal: Bool { steps >= 10_000 }
-    var caloriesGoal: Bool { calories >= 500 }
-    var sleepGoal: Bool { sleepHours >= 7.0 }
-    var stars: Int { (stepsGoal ? 1 : 0) + (caloriesGoal ? 1 : 0) + (sleepGoal ? 1 : 0) }
-}
-
 @MainActor
 final class HealthKitManager {
     let store = HKHealthStore()

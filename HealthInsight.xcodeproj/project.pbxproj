@@ -7,13 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B1000001 /* CoreAILM in Frameworks */ = {isa = PBXBuildFile; productRef = B1000002 /* CoreAILM */; };
-		B1000010 /* qwen2_5_1_5b_instruct_uncensored_4bit_weight_palettized_group8_static in Resources */ = {isa = PBXBuildFile; fileRef = B2000010 /* qwen2_5_1_5b_instruct_uncensored_4bit_weight_palettized_group8_static */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		B2000001 /* HealthInsight.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HealthInsight.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		B2000010 /* qwen2_5_1_5b_instruct_uncensored_4bit_weight_palettized_group8_static */ = {isa = PBXFileReference; lastKnownFileType = folder; path = qwen2_5_1_5b_instruct_uncensored_4bit_weight_palettized_group8_static; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -29,7 +26,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B1000001 /* CoreAILM in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -40,7 +36,6 @@
 			isa = PBXGroup;
 			children = (
 				B5000001 /* HealthInsight */,
-				B2000010 /* qwen2_5_1_5b_instruct_uncensored_4bit_weight_palettized_group8_static */,
 				B4000002 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -73,7 +68,6 @@
 			);
 			name = HealthInsight;
 			packageProductDependencies = (
-				B1000002 /* CoreAILM */,
 			);
 			productName = HealthInsight;
 			productReference = B2000001 /* HealthInsight.app */;
@@ -98,9 +92,6 @@
 			);
 			mainGroup = B4000001;
 			minimizedProjectReferenceProxies = 1;
-			packageReferences = (
-				B1000003 /* XCLocalSwiftPackageReference "../coreai-models" */,
-			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B4000002 /* Products */;
 			projectDirPath = "";
@@ -116,7 +107,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B1000010 /* qwen2_5_1_5b_instruct_uncensored_4bit_weight_palettized_group8_static in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -154,7 +144,7 @@
 				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -179,7 +169,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 6.0;
@@ -195,7 +185,6 @@
 				CODE_SIGN_ENTITLEMENTS = HealthInsight/HealthInsight.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = XQNC374BDU;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "HealthInsight reads your steps, sleep, and calorie data to provide AI-powered insights.";
@@ -210,7 +199,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				OTHER_LDFLAGS = "-lc++";
-				PRODUCT_BUNDLE_IDENTIFIER = com.chaitanya.HealthInsight;
+				PRODUCT_BUNDLE_IDENTIFIER = com.santitower.HealthInsight;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -228,7 +217,6 @@
 				CODE_SIGN_ENTITLEMENTS = HealthInsight/HealthInsight.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = XQNC374BDU;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "HealthInsight reads your steps, sleep, and calorie data to provide AI-powered insights.";
@@ -243,7 +231,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				OTHER_LDFLAGS = "-lc++";
-				PRODUCT_BUNDLE_IDENTIFIER = com.chaitanya.HealthInsight;
+				PRODUCT_BUNDLE_IDENTIFIER = com.santitower.HealthInsight;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -276,19 +264,6 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		B1000003 /* XCLocalSwiftPackageReference "../coreai-models" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = "../coreai-models";
-		};
-/* End XCLocalSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		B1000002 /* CoreAILM */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = CoreAILM;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B0000001 /* Project object */;
 }

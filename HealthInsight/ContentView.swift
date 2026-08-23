@@ -1,9 +1,7 @@
-import CoreAILanguageModels
 import SwiftUI
 
 struct ContentView: View {
-    @State private var modelStatus = "Loading model..."
-    @State private var model: CoreAILanguageModel?
+    @State private var coachStatus = "Preparing coach..."
     @State private var healthManager = HealthKitManager()
     @State private var healthAuthorized = false
 
@@ -14,6 +12,8 @@ struct ContentView: View {
     @State private var todayReport = ""
     @State private var weekReport = ""
     @State private var aiMotivation = ""
+
+    private let coach = OnDeviceCoach()
 
     var body: some View {
         NavigationStack {
@@ -37,8 +37,8 @@ struct ContentView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     HStack(spacing: 4) {
-                        Circle().fill(model != nil ? .green : .orange).frame(width: 6, height: 6)
-                        Text(modelStatus).font(.caption2).foregroundStyle(.secondary)
+                        Circle().fill(.green).frame(width: 6, height: 6)
+                        Text(coachStatus).font(.caption2).foregroundStyle(.secondary)
                     }
                 }
                 ToolbarItem(placement: .topBarTrailing) {
@@ -49,7 +49,7 @@ struct ContentView: View {
                 }
             }
         }
-        .task { await loadModel() }
+        .task { await prepareCoach() }
     }
 
     // MARK: - Connect
@@ -68,7 +68,7 @@ struct ContentView: View {
                         healthAuthorized = true
                         await fetchData()
                     } catch {
-                        modelStatus = "HealthKit error: \(error.localizedDescription)"
+                        coachStatus = "HealthKit error: \(error.localizedDescription)"
                     }
                 }
             }
@@ -230,7 +230,7 @@ struct ContentView: View {
             .buttonStyle(.borderedProminent)
             .tint(.purple)
             .controlSize(.large)
-            .disabled(model == nil || isAnalyzing)
+            .disabled(isAnalyzing)
 
             if !todayReport.isEmpty {
                 insightCard("Today's Report", content: todayReport, icon: "checkmark.circle", color: .blue)
@@ -257,20 +257,8 @@ struct ContentView: View {
 
     // MARK: - Data
 
-    private func loadModel() async {
-        do {
-            guard let modelURL = Bundle.main.url(
-                forResource: "qwen2_5_1_5b_instruct_uncensored_4bit_weight_palettized_group8_static",
-                withExtension: nil
-            ) else {
-                modelStatus = "Model not found"
-                return
-            }
-            model = try await CoreAILanguageModel(resourcesAt: modelURL, mode: .eager)
-            modelStatus = "Qwen 1.5B ready"
-        } catch {
-            modelStatus = "Load failed"
-        }
+    private func prepareCoach() async {
+        coachStatus = await coach.statusLabel()
     }
 
     private func fetchData() async {
@@ -279,8 +267,9 @@ struct ContentView: View {
     }
 
     private func generateInsight() async {
-        guard let model, let today else { return }
+        guard let today else { return }
         isAnalyzing = true
+        defer { isAnalyzing = false }
         todayReport = ""
         weekReport = ""
         aiMotivation = ""
@@ -335,25 +324,12 @@ struct ContentView: View {
             weekReport = weekLines.joined(separator: "\n")
         }
 
-        let starEmoji = today.stars == 3 ? "PERFECT" : today.stars == 2 ? "ALMOST" : today.stars == 1 ? "OKAY" : "TOUGH"
-        let systemPrompt = "Write exactly 2 short fun motivational sentences like a Duolingo health buddy. No data, no numbers, no lists. Just energy and a vibe."
-        let userPrompt: String
-        if today.stars == 3 {
-            userPrompt = "\(starEmoji) day — user hit all goals. Hype them up and tell them to keep the streak alive tomorrow."
-        } else {
-            let missedNames = [
-                today.stepsGoal ? nil : "walking",
-                today.caloriesGoal ? nil : "activity",
-                today.sleepGoal ? nil : "sleep",
-            ].compactMap { $0 }.joined(separator: " and ")
-            userPrompt = "\(starEmoji) day — user needs to improve \(missedNames). Give a fun challenge for tomorrow, not a lecture."
-        }
-        do {
-            aiMotivation = try await model.rawGenerate(systemPrompt: systemPrompt, userPrompt: userPrompt, maxTokens: 80)
-        } catch {
-            aiMotivation = "Keep going — every day is a fresh chance!"
-        }
-        isAnalyzing = false
+        let missedGoals = [
+            today.stepsGoal ? nil : "walking",
+            today.caloriesGoal ? nil : "activity",
+            today.sleepGoal ? nil : "sleep",
+        ].compactMap { $0 }
+        aiMotivation = await coach.motivation(stars: today.stars, missedGoals: missedGoals)
     }
 }
 

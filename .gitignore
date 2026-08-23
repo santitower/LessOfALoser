@@ -1,6 +1,10 @@
-qwen2_5_1_5b_instruct_uncensored_4bit_weight_palettized_group8_static
-*.aimodel
 DerivedData/
 .build/
 *.xcuserstate
 xcuserdata/
+.vercel
+.env*
+.DS_Store
+**/__pycache__/
+node_modules/
+.next/
