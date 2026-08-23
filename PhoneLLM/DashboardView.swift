@@ -125,7 +125,7 @@ struct DashboardView: View {
                 Label("Daily coach", systemImage: "sparkles")
                     .font(.headline)
                 Spacer()
-                Text(model.briefing.generatedLocally ? "On-device AI" : "Verified fallback")
+                Text(model.briefing.source.displayName)
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -146,7 +146,7 @@ struct DashboardView: View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Today's Screen Time")
                 .font(.headline)
-            DeviceActivityReport(context: .dailyWellness, filter: reportFilter)
+            DeviceActivityReport(.dailyWellness, filter: reportFilter)
                 .frame(minHeight: 150)
             Text("The privacy-preserving report extension writes only the coarse daily total to the shared on-device container.")
                 .font(.caption)
