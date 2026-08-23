@@ -10,91 +10,102 @@ struct ContentView: View {
     @State private var today: DayScore?
     @State private var weekData: [DayScore] = []
 
-    @State private var insight = ""
     @State private var isAnalyzing = false
+    @State private var todayReport = ""
+    @State private var weekReport = ""
+    @State private var aiMotivation = ""
 
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 20) {
-                    statusSection
+                VStack(spacing: 18) {
                     if healthAuthorized, let today {
                         todayStarCard(today)
-                        todayMetrics(today)
-                        if !weekData.isEmpty {
-                            weekSection
-                        }
+                        metricGrid(today)
+                        if !weekData.isEmpty { weekSection }
                         insightSection
                     } else if healthAuthorized {
                         ProgressView("Fetching health data...")
                     } else {
-                        authorizeButton
+                        connectCard
                     }
                 }
                 .padding()
             }
+            .background(Color(.systemGroupedBackground))
             .navigationTitle("Health Insight")
-            .navigationBarTitleDisplayMode(.large)
-            .refreshable {
-                await fetchData()
-            }
-        }
-        .task {
-            await loadModel()
-        }
-    }
-
-    // MARK: - Status
-
-    private var statusSection: some View {
-        HStack(spacing: 6) {
-            Circle()
-                .fill(model != nil ? .green : .orange)
-                .frame(width: 8, height: 8)
-            Text(modelStatus)
-                .font(.caption2)
-                .foregroundStyle(.secondary)
-            Spacer()
-        }
-    }
-
-    private var authorizeButton: some View {
-        Button("Connect Apple Health") {
-            Task {
-                do {
-                    try await healthManager.requestAuthorization()
-                    healthAuthorized = true
-                    await fetchData()
-                } catch {
-                    modelStatus = "HealthKit error: \(error.localizedDescription)"
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    HStack(spacing: 4) {
+                        Circle().fill(model != nil ? .green : .orange).frame(width: 6, height: 6)
+                        Text(modelStatus).font(.caption2).foregroundStyle(.secondary)
+                    }
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button { Task { await fetchData() } } label: {
+                        Image(systemName: "arrow.clockwise")
+                    }
+                    .disabled(!healthAuthorized)
                 }
             }
         }
-        .buttonStyle(.borderedProminent)
-        .controlSize(.large)
+        .task { await loadModel() }
     }
 
-    // MARK: - Today Star Card
+    // MARK: - Connect
+
+    private var connectCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Label("Connect your data", systemImage: "lock.shield.fill")
+                .font(.headline)
+            Text("Health Insight reads steps, calories, and sleep to give you a daily star score with AI coaching. All processing stays on this iPhone.")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+            Button("Connect Apple Health") {
+                Task {
+                    do {
+                        try await healthManager.requestAuthorization()
+                        healthAuthorized = true
+                        await fetchData()
+                    } catch {
+                        modelStatus = "HealthKit error: \(error.localizedDescription)"
+                    }
+                }
+            }
+            .buttonStyle(.borderedProminent)
+        }
+        .cardStyle()
+    }
+
+    // MARK: - Star Hero
 
     private func todayStarCard(_ day: DayScore) -> some View {
-        VStack(spacing: 8) {
-            Text("Today's Score")
-                .font(.headline)
+        VStack(spacing: 12) {
             HStack(spacing: 4) {
                 ForEach(0..<3) { i in
                     Image(systemName: i < day.stars ? "star.fill" : "star")
-                        .font(.title)
-                        .foregroundStyle(i < day.stars ? .yellow : .gray.opacity(0.3))
+                        .font(.largeTitle)
+                        .foregroundStyle(i < day.stars ? .yellow : .white.opacity(0.3))
                 }
             }
             Text(starLabel(day.stars))
-                .font(.subheadline)
-                .foregroundStyle(day.stars == 3 ? .green : day.stars >= 1 ? .orange : .red)
+                .font(.title3.bold())
+            Text("\(day.stars)/3 goals hit today")
+                .font(.caption)
+                .foregroundStyle(.white.opacity(0.7))
         }
+        .foregroundStyle(.white)
         .frame(maxWidth: .infinity)
-        .padding()
-        .background(starBackground(day.stars))
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .padding(22)
+        .background(
+            LinearGradient(
+                colors: starGradient(day.stars),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            ),
+            in: RoundedRectangle(cornerRadius: 22, style: .continuous)
+        )
+        .shadow(color: .purple.opacity(0.2), radius: 16, y: 8)
     }
 
     private func starLabel(_ stars: Int) -> String {
@@ -106,56 +117,80 @@ struct ContentView: View {
         }
     }
 
-    private func starBackground(_ stars: Int) -> Color {
+    private func starGradient(_ stars: Int) -> [Color] {
         switch stars {
-        case 3: Color.green.opacity(0.12)
-        case 2: Color.orange.opacity(0.12)
-        case 1: Color.yellow.opacity(0.12)
-        default: Color(.systemGray5)
+        case 3: [Color(red: 0.1, green: 0.5, blue: 0.3), Color(red: 0.2, green: 0.7, blue: 0.4)]
+        case 2: [Color(red: 0.6, green: 0.3, blue: 0.1), Color(red: 0.8, green: 0.5, blue: 0.1)]
+        case 1: [Color(red: 0.5, green: 0.4, blue: 0.1), Color(red: 0.6, green: 0.5, blue: 0.2)]
+        default: [Color(red: 0.3, green: 0.2, blue: 0.5), Color(red: 0.4, green: 0.3, blue: 0.6)]
         }
     }
 
-    // MARK: - Today Metrics
+    // MARK: - Metrics
 
-    private func todayMetrics(_ day: DayScore) -> some View {
+    private func metricGrid(_ day: DayScore) -> some View {
         HStack(spacing: 12) {
-            metricCard("Steps", value: "\(day.steps)", goal: "10,000", hit: day.stepsGoal, icon: "figure.walk", color: .blue)
-            metricCard("Calories", value: "\(Int(day.calories))", goal: "500", hit: day.caloriesGoal, icon: "flame.fill", color: .orange)
-            metricCard("Sleep", value: String(format: "%.1fh", day.sleepHours), goal: "7h", hit: day.sleepGoal, icon: "moon.fill", color: .purple)
+            metricTile("Steps", value: day.steps, goal: 10_000, symbol: "figure.walk", tint: .green)
+            metricTile("Calories", value: Int(day.calories), goal: 500, symbol: "flame.fill", tint: .orange)
+            metricTile("Sleep", value: day.sleepHours, goalHours: 7, symbol: "bed.double.fill", tint: .indigo)
         }
     }
 
-    private func metricCard(_ title: String, value: String, goal: String, hit: Bool, icon: String, color: Color) -> some View {
-        VStack(spacing: 4) {
-            Image(systemName: hit ? "star.fill" : icon)
-                .font(.title3)
-                .foregroundStyle(hit ? .yellow : color)
-            Text(value)
-                .font(.subheadline.bold())
-            Text(title)
+    private func metricTile(_ title: String, value: Int, goal: Int, symbol: String, tint: Color) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Image(systemName: symbol)
+                .font(.headline)
+                .foregroundStyle(tint)
+                .frame(width: 30, height: 30)
+                .background(tint.opacity(0.12), in: Circle())
+            Text("\(value)")
+                .font(.headline.monospacedDigit())
+            ProgressView(value: min(Double(value), Double(goal)), total: Double(goal))
+                .tint(value >= goal ? .green : tint)
+            Text("\(title) · \(goal >= 1000 ? "\(goal/1000)K" : "\(goal)")")
                 .font(.caption2)
                 .foregroundStyle(.secondary)
-            Text("/ \(goal)")
-                .font(.caption2)
-                .foregroundStyle(hit ? .green : .red)
         }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 14)
-        .background(color.opacity(0.08))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(12)
+        .background(.background, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+    }
+
+    private func metricTile(_ title: String, value: Double, goalHours: Double, symbol: String, tint: Color) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Image(systemName: symbol)
+                .font(.headline)
+                .foregroundStyle(tint)
+                .frame(width: 30, height: 30)
+                .background(tint.opacity(0.12), in: Circle())
+            Text(String(format: "%.1fh", value))
+                .font(.headline.monospacedDigit())
+            ProgressView(value: min(value, goalHours), total: goalHours)
+                .tint(value >= goalHours ? .green : tint)
+            Text("\(title) · \(Int(goalHours))h")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(12)
+        .background(.background, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
     // MARK: - Week
 
     private var weekSection: some View {
         VStack(spacing: 8) {
-            Text("This Week")
-                .font(.headline)
-                .frame(maxWidth: .infinity, alignment: .leading)
+            HStack {
+                Text("This Week").font(.headline)
+                Spacer()
+                let perfectDays = weekData.filter { $0.stars == 3 }.count
+                Text("\(perfectDays) perfect").font(.caption.bold()).foregroundStyle(.green)
+            }
+
             ForEach(weekData) { day in
                 HStack(spacing: 8) {
                     Text(day.dateLabel)
-                        .font(.caption)
+                        .font(.caption.monospacedDigit())
                         .frame(width: 65, alignment: .leading)
                     HStack(spacing: 2) {
                         ForEach(0..<3) { i in
@@ -164,57 +199,36 @@ struct ContentView: View {
                                 .foregroundStyle(i < day.stars ? .yellow : .gray.opacity(0.3))
                         }
                     }
-                    .frame(width: 50)
+                    Spacer()
                     Label("\(day.steps / 1000)k", systemImage: "figure.walk")
                         .font(.caption2)
                         .foregroundStyle(day.stepsGoal ? .primary : .secondary)
-                        .frame(maxWidth: .infinity)
                     Label("\(Int(day.calories))", systemImage: "flame.fill")
                         .font(.caption2)
                         .foregroundStyle(day.caloriesGoal ? .primary : .secondary)
-                        .frame(maxWidth: .infinity)
                     Label(String(format: "%.1f", day.sleepHours), systemImage: "moon.fill")
                         .font(.caption2)
                         .foregroundStyle(day.sleepGoal ? .primary : .secondary)
-                        .frame(maxWidth: .infinity)
                 }
                 .padding(.vertical, 3)
             }
-
-            let perfectDays = weekData.filter { $0.stars == 3 }.count
-            let avgStars = weekData.isEmpty ? 0.0 : Double(weekData.map(\.stars).reduce(0, +)) / Double(weekData.count)
-            HStack {
-                Text("\(perfectDays) perfect day\(perfectDays == 1 ? "" : "s")")
-                    .font(.caption.bold())
-                    .foregroundStyle(.green)
-                Spacer()
-                Text(String(format: "Avg %.1f stars/day", avgStars))
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-            .padding(.top, 4)
         }
-        .padding()
-        .background(Color(.systemGray6))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .cardStyle()
     }
 
     // MARK: - AI Insight
-
-    @State private var todayReport = ""
-    @State private var weekReport = ""
-    @State private var aiMotivation = ""
 
     private var insightSection: some View {
         VStack(spacing: 12) {
             Button(action: { Task { await generateInsight() } }) {
                 HStack {
-                    Image(systemName: "brain")
+                    Image(systemName: "sparkles")
                     Text(isAnalyzing ? "Analyzing..." : "Get AI Insight")
                 }
                 .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
+            .tint(.purple)
             .controlSize(.large)
             .disabled(model == nil || isAnalyzing)
 
@@ -238,10 +252,7 @@ struct ContentView: View {
             Text(content)
                 .font(.subheadline)
         }
-        .padding()
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(color.opacity(0.08))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .cardStyle()
     }
 
     // MARK: - Data
@@ -252,13 +263,13 @@ struct ContentView: View {
                 forResource: "qwen2_5_1_5b_instruct_uncensored_4bit_weight_palettized_group8_static",
                 withExtension: nil
             ) else {
-                modelStatus = "Model not found in bundle"
+                modelStatus = "Model not found"
                 return
             }
             model = try await CoreAILanguageModel(resourcesAt: modelURL, mode: .eager)
             modelStatus = "Qwen 1.5B ready"
         } catch {
-            modelStatus = "Model load failed: \(error.localizedDescription)"
+            modelStatus = "Load failed"
         }
     }
 
@@ -274,7 +285,6 @@ struct ContentView: View {
         weekReport = ""
         aiMotivation = ""
 
-        // --- TODAY'S REPORT: 100% deterministic, built by harness ---
         var todayLines: [String] = []
         if today.stepsGoal {
             todayLines.append("Steps: \(today.steps) — goal smashed!")
@@ -296,20 +306,16 @@ struct ContentView: View {
         }
         todayReport = todayLines.joined(separator: "\n")
 
-        // --- WEEKLY SUMMARY: deterministic ---
         if !weekData.isEmpty {
             let perfectDays = weekData.filter { $0.stars == 3 }.count
             let totalStars = weekData.map(\.stars).reduce(0, +)
             let avgSteps = weekData.map(\.steps).reduce(0, +) / weekData.count
             let avgCals = Int(weekData.map(\.calories).reduce(0, +) / Double(weekData.count))
             let avgSleep = weekData.map(\.sleepHours).reduce(0, +) / Double(weekData.count)
-
             let stepsHitDays = weekData.filter(\.stepsGoal).count
             let calsHitDays = weekData.filter(\.caloriesGoal).count
             let sleepHitDays = weekData.filter(\.sleepGoal).count
-
-            let sleepValues = weekData.map(\.sleepHours)
-            let sleepVariance = sleepValues.map { ($0 - avgSleep) * ($0 - avgSleep) }.reduce(0, +) / Double(sleepValues.count)
+            let sleepVariance = weekData.map(\.sleepHours).map { ($0 - avgSleep) * ($0 - avgSleep) }.reduce(0, +) / Double(weekData.count)
 
             var weekLines: [String] = []
             weekLines.append("\(totalStars)/21 stars this week (\(perfectDays) perfect days)")
@@ -317,25 +323,20 @@ struct ContentView: View {
             weekLines.append("Calories goal hit \(calsHitDays)/7 days (avg \(avgCals))")
             weekLines.append("Sleep goal hit \(sleepHitDays)/7 days (avg \(String(format: "%.1f", avgSleep))h)")
             if sleepVariance > 1.5 {
-                weekLines.append("Your sleep schedule is inconsistent — try a fixed bedtime.")
+                weekLines.append("Sleep schedule is inconsistent — try a fixed bedtime.")
             } else if avgSleep >= 7 {
                 weekLines.append("Sleep has been consistent and solid.")
             }
-
             let weakest: String
             if stepsHitDays <= calsHitDays && stepsHitDays <= sleepHitDays { weakest = "steps" }
             else if calsHitDays <= sleepHitDays { weakest = "calories" }
             else { weakest = "sleep" }
             weekLines.append("Biggest opportunity: \(weakest) — focus here for more stars.")
-
             weekReport = weekLines.joined(separator: "\n")
         }
 
-        // --- AI MOTIVATION: LLM only writes 1-2 fun sentences ---
         let starEmoji = today.stars == 3 ? "PERFECT" : today.stars == 2 ? "ALMOST" : today.stars == 1 ? "OKAY" : "TOUGH"
-
         let systemPrompt = "Write exactly 2 short fun motivational sentences like a Duolingo health buddy. No data, no numbers, no lists. Just energy and a vibe."
-
         let userPrompt: String
         if today.stars == 3 {
             userPrompt = "\(starEmoji) day — user hit all goals. Hype them up and tell them to keep the streak alive tomorrow."
@@ -347,18 +348,20 @@ struct ContentView: View {
             ].compactMap { $0 }.joined(separator: " and ")
             userPrompt = "\(starEmoji) day — user needs to improve \(missedNames). Give a fun challenge for tomorrow, not a lecture."
         }
-
         do {
-            let result = try await model.rawGenerate(
-                systemPrompt: systemPrompt,
-                userPrompt: userPrompt,
-                maxTokens: 80
-            )
-            aiMotivation = result
+            aiMotivation = try await model.rawGenerate(systemPrompt: systemPrompt, userPrompt: userPrompt, maxTokens: 80)
         } catch {
             aiMotivation = "Keep going — every day is a fresh chance!"
         }
         isAnalyzing = false
+    }
+}
+
+private extension View {
+    func cardStyle() -> some View {
+        padding()
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(.background, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
     }
 }
 
