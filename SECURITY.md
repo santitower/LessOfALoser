@@ -7,3 +7,5 @@ For the current prototype, report ordinary code issues through GitHub Issues usi
 The optional Computer Coach gateway must remain bound to loopback and be exposed only with Tailscale Serve—not Funnel, router port forwarding, or a public reverse proxy. Do not place Tailscale auth keys, bearer tokens, Ollama transcripts, LaunchAgent plists containing secrets, or real wellness summaries in issues or commits.
 
 Use a Tailscale ACL or grant to limit direct access to the Ollama host and port. The gateway's identity-header authorization is valid only behind Tailscale Serve, which supplies and sanitizes those headers.
+
+The Wellness League is currently a synthetic-data preview. Do not replace the demo profiles with a real upload until the consent, deletion, invite approval, private-profile, blocking, reporting, retention, and authentication requirements in `docs/SOCIAL_LEAGUES.md` are implemented and reviewed. A social snapshot must never contain exact HealthKit or Screen Time measurements.
