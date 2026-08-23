@@ -160,8 +160,7 @@ actor LocalWellnessCoach {
 
         do {
             let model = try await CoreAILanguageModel(
-                resourcesAt: metadataURL.deletingLastPathComponent(),
-                mode: .eager
+                resourcesAt: metadataURL.deletingLastPathComponent()
             )
             coreAIModel = model
             return model
