@@ -1,4 +1,5 @@
 import DeviceActivity
+import ExtensionKit
 import SwiftUI
 import WellnessCore
 
@@ -13,7 +14,7 @@ struct ScreenTimeReportExtension: DeviceActivityReportExtension {
     }
 }
 
-struct DailyScreenTimeReport: DeviceActivityReportScene {
+struct DailyScreenTimeReport: @preconcurrency DeviceActivityReportScene {
     let context: DeviceActivityReport.Context = .dailyWellness
     let content: (DailyScreenTimeConfiguration) -> DailyScreenTimeView
 
@@ -81,4 +82,3 @@ struct DailyScreenTimeView: View {
         return "\(minutes / 60)h \(minutes % 60)m"
     }
 }
-
