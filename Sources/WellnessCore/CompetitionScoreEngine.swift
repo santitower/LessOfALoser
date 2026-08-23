@@ -16,7 +16,7 @@ public struct WellnessGoals: Codable, Equatable, Sendable {
     }
 }
 
-public struct DailyCompetitionScore: Equatable, Sendable {
+public struct DailyCompetitionScore: Codable, Equatable, Sendable {
     public let day: Date
     public let sleepGoalMet: Bool?
     public let stepsGoalMet: Bool?
@@ -48,7 +48,7 @@ public struct DailyCompetitionScore: Equatable, Sendable {
     }
 }
 
-public struct WeeklyCompetitionScore: Equatable, Sendable {
+public struct WeeklyCompetitionScore: Codable, Equatable, Sendable {
     public let periodStart: Date
     public let periodEnd: Date
     public let sleepPoints: Int
@@ -118,5 +118,53 @@ public enum CompetitionScoreEngine {
             screenTimePoints: dailyScores.reduce(0) { $0 + $1.screenTimePoints },
             activeDays: dailyScores.filter { $0.availableGoals > 0 }.count
         )
+    }
+
+    public static func currentStreak(
+        records: [DailyWellnessRecord],
+        through date: Date = .now,
+        goals: WellnessGoals = WellnessGoals(),
+        calendar: Calendar = .autoupdatingCurrent
+    ) -> Int {
+        let day = calendar.startOfDay(for: date)
+        let latestByDay = Dictionary(grouping: records.filter { $0.date <= date }) {
+            calendar.startOfDay(for: $0.date)
+        }.compactMapValues { records in
+            records.max { $0.date < $1.date }
+        }
+
+        let todayEarned = latestByDay[day].map { dailyScore(for: $0, goals: goals).totalPoints > 0 }
+            ?? false
+        let startDay: Date
+        if todayEarned {
+            startDay = day
+        } else if let yesterday = calendar.date(byAdding: .day, value: -1, to: day),
+                  latestByDay[yesterday].map({ dailyScore(for: $0, goals: goals).totalPoints > 0 }) == true
+        {
+            startDay = yesterday
+        } else {
+            return 0
+        }
+
+        var streak = 0
+        var cursor = startDay
+        while let record = latestByDay[cursor], dailyScore(for: record, goals: goals).totalPoints > 0 {
+            streak += 1
+            guard let priorDay = calendar.date(byAdding: .day, value: -1, to: cursor) else {
+                break
+            }
+            cursor = priorDay
+        }
+        return streak
+    }
+
+    public static func weekIdentifier(
+        containing date: Date = .now,
+        calendar: Calendar = .autoupdatingCurrent
+    ) -> String {
+        let components = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: date)
+        let year = components.yearForWeekOfYear ?? calendar.component(.year, from: date)
+        let week = components.weekOfYear ?? 1
+        return String(format: "%04d-W%02d", year, week)
     }
 }

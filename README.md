@@ -20,13 +20,19 @@ No personal health data belongs in this repository, and the starter contains no 
 - Privacy-preserving `DeviceActivityReportExtension`
 - Coarse daily Screen Time sharing through a local App Group container
 - 28-day baseline comparisons in the platform-independent `WellnessCore` module
+- One reviewed insight context shared by Today, League, Ask, and export
+- Focusable daily path with explicit achieved, open, and unavailable goal states
 - On-device Foundation Models coaching with a deterministic fallback
 - Optional iOS 27 Core AI target for an exported Qwen 2.5 1.5B model
 - Optional Computer Coach using Tailscale HTTPS and Ollama on a personal computer
 - In-app Quick Connect plus a one-tap `lessofaloser://connect` link
 - Aggregate-only gateway validation, Tailscale identity checks, and safe automatic fallback
+- Dedicated Personal AI chat tab backed by a replaceable on-device model runtime
+- In-memory conversations grounded in aggregate trends, with a verified no-model fallback
+- User-initiated, versioned aggregate wellness export for private portability
+- Companion web review with retrospective trends, model-context inspection, a local league preview, and PDF output
 - Wellness League preview with weekly consistency points, rank movement, podiums, streaks, duels, and preset friend reactions
-- Synthetic social profiles and a local-score toggle while the consent/account backend remains intentionally unimplemented
+- No-login local league-pass export/import for real friend snapshots, with synthetic profiles kept visibly in preview mode
 - Swift unit tests and a GitHub Actions workflow
 
 ## Requirements
@@ -43,7 +49,9 @@ The optional custom-model build requires Xcode 27, iOS 27, and a separately expo
 
 An older iPhone can instead use a computer running Tailscale, Python 3, and Ollama. See [the Private Computer Coach guide](docs/REMOTE_COMPUTER.md).
 
-The social competition tab is a local, synthetic-data UI prototype. See [the Wellness Leagues design and backend boundary](docs/SOCIAL_LEAGUES.md).
+The social competition tab starts as a clearly labeled synthetic preview and can switch to real,
+manually exchanged aggregate league passes without a backend. See [the Wellness Leagues design
+and backend boundary](docs/SOCIAL_LEAGUES.md).
 
 HealthKit and Device Activity should be tested on a physical iPhone. The deterministic `WellnessCore` package can be tested on macOS without Xcode.
 
@@ -94,6 +102,10 @@ The generated project contains two application schemes:
 
 The Qwen model is not committed to GitHub. Follow [docs/CORE_AI.md](docs/CORE_AI.md) to export and install it locally. If the model is missing or cannot load, the same build automatically falls back to Apple's system model and then to deterministic rules.
 
+The **Ask** tab keeps a local conversation with whichever on-device language model is available. Its UI depends on a small runtime protocol so an optimized model implementation can arrive in a later PR without rewriting the screen. See [the Personal AI integration boundary](docs/PERSONAL_AI.md).
+
+The **Today** tab can also save a versioned aggregate JSON package. Open that file in the companion `web-demo` to create a retrospective review and PDF without granting a website direct Apple Health access. See [the Web review and report flow](docs/WEB_REVIEW.md).
+
 ## Run core tests
 
 ```sh
@@ -129,7 +141,11 @@ desktop_gateway/          Aggregate-only Tailscale-to-Ollama gateway
 Resources/CoreAI/         Local-only custom model resources (Git-ignored)
 Sources/WellnessCore/     Shared models, trend engine, local snapshot store
 Tests/WellnessCoreTests/  Platform-independent tests
+web-demo/                 Companion retrospective, league, and PDF-ready web review
 docs/CORE_AI.md            Qwen/Core AI export and build instructions
+docs/BRANCH_INTEGRATION_REVIEW.md  Branch audit and adopted architecture
+docs/PERSONAL_AI.md        Conversational model runtime and privacy contract
+docs/WEB_REVIEW.md         Native export, web import, social storage, and report boundary
 docs/REMOTE_COMPUTER.md    Tailscale Computer Coach setup and security model
 docs/SOCIAL_LEAGUES.md     Competition score, consent, and backend boundary
 project.yml               XcodeGen project definition

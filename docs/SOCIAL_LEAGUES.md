@@ -10,7 +10,8 @@ The prototype includes:
 - personal goal controls;
 - streaks and a friendly one-on-one duel;
 - preset playful reactions; and
-- a clear preview mode using synthetic friend profiles.
+- a clear preview mode using synthetic friend profiles; and
+- explicit local league-pass sharing for real friend snapshots without an account or backend.
 
 Duolingo's public explanation highlights weekly resets, matching learners with similar habits, promotion through league tiers, and the ability to opt out. Its social features add friend streaks, milestone celebrations, and cooperative quests. Those mechanics informed the hierarchy, while LessOfALoser uses its own visual language and a much narrower health-data boundary.
 
@@ -33,7 +34,7 @@ The default goals are examples and can be changed locally. They are not medical 
 
 ## Current boundary
 
-The current screen is deliberately a preview:
+The default screen is deliberately a preview:
 
 - friend profiles, scores, streaks, movement, and reactions are synthetic;
 - the user can choose to substitute their locally calculated weekly score;
@@ -41,7 +42,16 @@ The current screen is deliberately a preview:
 - no social backend is contacted; and
 - no health-derived value is uploaded.
 
-The UI must continue to say this plainly until a real service exists.
+For a real small-group comparison, the user can explicitly create a versioned JSON **league
+pass** containing only display name, week ID, weekly points, active days, streak, focus, a random
+profile identifier, and export time. A friend can send that file using the iOS share sheet and the
+recipient can import it. Ranking then happens entirely on the recipient's device. Exact health and
+Screen Time measurements are not included, and the app performs no upload.
+
+This is a private MVP transport, not a production social network. Passes do not update
+automatically and are not cryptographically signed, so they are not cheat-resistant. Synthetic
+people continue to appear only in the visibly labeled preview; after a real pass is imported, the
+standings contain only the user and imported current-week profiles.
 
 ## Backend contract for a later phase
 
@@ -76,6 +86,11 @@ Preset reactions are intentional. They allow playful competition without introdu
 ## Apple privacy considerations
 
 Apple requires permission before personal data is transmitted or shared, a way to withdraw consent, data minimization, and clear retention/deletion policies. Its current Health and Health Research rule also says personal health information may not be stored in iCloud. For that reason, do not assume CloudKit is an acceptable store for a HealthKit-derived leaderboard score without a dedicated legal and App Review assessment.
+
+CloudKit was therefore evaluated and removed from the current integration. It is unnecessary for
+HealthKit ingestion, Screen Time, local model inference, reports, or league-pass exchange. A future
+automatic social service should be selected only after the health-derived data classification,
+account/deletion flow, access controls, anti-cheat model, and App Review position are resolved.
 
 - [App Review Guidelines, sections 5.1.1–5.1.3](https://developer.apple.com/app-store/review/guidelines/)
 - [HealthKit privacy guidance](https://developer.apple.com/documentation/healthkit/protecting-user-privacy)

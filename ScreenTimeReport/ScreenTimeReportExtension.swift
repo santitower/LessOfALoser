@@ -23,29 +23,38 @@ struct DailyScreenTimeReport: @preconcurrency DeviceActivityReportScene {
     func makeConfiguration(
         representing data: DeviceActivityResults<DeviceActivityData>
     ) async -> DailyScreenTimeConfiguration {
-        var totalDuration: TimeInterval = 0
-        var latestUpdate = Date.distantPast
-        var representedDay = Calendar.autoupdatingCurrent.startOfDay(for: .now)
+        let calendar = Calendar.autoupdatingCurrent
+        let today = calendar.startOfDay(for: .now)
+        var durationByDay: [Date: TimeInterval] = [:]
+        var updateByDay: [Date: Date] = [:]
 
         for await deviceData in data {
-            latestUpdate = max(latestUpdate, deviceData.lastUpdatedDate)
             for await segment in deviceData.activitySegments {
-                totalDuration += segment.totalActivityDuration
-                representedDay = Calendar.autoupdatingCurrent.startOfDay(for: segment.dateInterval.start)
+                let day = calendar.startOfDay(for: segment.dateInterval.start)
+                durationByDay[day, default: 0] += segment.totalActivityDuration
+                updateByDay[day] = max(
+                    updateByDay[day] ?? .distantPast,
+                    deviceData.lastUpdatedDate
+                )
             }
         }
 
-        let minutes = totalDuration / 60
-        let snapshot = ScreenTimeSnapshot(
-            day: representedDay,
-            totalMinutes: minutes,
-            lastUpdated: latestUpdate == .distantPast ? .now : latestUpdate
-        )
-        try? SharedScreenTimeStore().save(snapshot)
+        let store = SharedScreenTimeStore()
+        for (day, duration) in durationByDay {
+            let snapshot = ScreenTimeSnapshot(
+                day: day,
+                totalMinutes: duration / 60,
+                lastUpdated: updateByDay[day] ?? .now
+            )
+            try? store.save(snapshot)
+        }
+
+        let minutes = durationByDay[today, default: 0] / 60
+        let latestUpdate = updateByDay[today] ?? .now
 
         return DailyScreenTimeConfiguration(
             totalMinutes: minutes,
-            lastUpdated: snapshot.lastUpdated
+            lastUpdated: latestUpdate
         )
     }
 }

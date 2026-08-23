@@ -1,32 +1,69 @@
 import SwiftUI
+import UniformTypeIdentifiers
 import WellnessCore
 
 struct WellnessLeagueView: View {
     @Bindable var model: WellnessViewModel
-    @AppStorage("competition.useLocalScoreInPreview") private var useLocalScore = false
-    @AppStorage("competition.sleepGoalMinutes") private var sleepGoalMinutes = 420
-    @AppStorage("competition.stepsGoal") private var stepsGoal = 8_000
-    @AppStorage("competition.screenTimeGoalMinutes") private var screenTimeGoalMinutes = 180
+    @Bindable var friends: LeagueFriendsViewModel
     @State private var showingSharingSetup = false
     @State private var reactionNotice: String?
+    @State private var scoringDate = Date.now
+
+    private var insightContext: WellnessInsightContext {
+        model.insightContext(for: scoringDate)
+    }
 
     private var weeklyScore: WeeklyCompetitionScore {
-        CompetitionScoreEngine.weeklyScore(
-            records: model.records,
-            goals: WellnessGoals(
-                sleepMinutes: Double(sleepGoalMinutes),
-                steps: Double(stepsGoal),
-                screenTimeMinutes: Double(screenTimeGoalMinutes)
-            )
-        )
+        insightContext.weeklyScore
+    }
+
+    private var friendProfiles: [LeagueFriendProfile] {
+        friends.profiles(for: insightContext.weekIdentifier)
+    }
+
+    private var hasLiveLeague: Bool {
+        !friendProfiles.isEmpty
+    }
+
+    private var isUsingLocalScore: Bool {
+        hasLiveLeague || model.useLocalScoreInPreview
     }
 
     private var displayedUserPoints: Int {
-        useLocalScore ? weeklyScore.totalPoints : 174
+        isUsingLocalScore ? weeklyScore.totalPoints : 170
     }
 
     private var standings: [LeagueStanding] {
-        DemoWellnessLeague.standings(currentUserPoints: displayedUserPoints)
+        guard hasLiveLeague else {
+            return DemoWellnessLeague.standings(currentUserPoints: displayedUserPoints)
+        }
+
+        let me = LeagueStanding(
+            id: "you",
+            name: friends.state.myDisplayName.isEmpty ? "You" : friends.state.myDisplayName,
+            initials: "YOU",
+            points: weeklyScore.totalPoints,
+            streakDays: insightContext.currentStreak,
+            movement: 0,
+            accent: .violet,
+            isCurrentUser: true
+        )
+        let others = friendProfiles.map { profile in
+            LeagueStanding(
+                id: profile.profileIdentifier,
+                name: profile.displayName,
+                initials: initials(for: profile.displayName),
+                points: profile.weeklyPoints,
+                streakDays: profile.streakDays,
+                movement: 0,
+                accent: accent(for: profile.profileIdentifier),
+                isCurrentUser: false
+            )
+        }
+        return ([me] + others).sorted {
+            if $0.points == $1.points { return $0.name < $1.name }
+            return $0.points > $1.points
+        }
     }
 
     private var currentRank: Int {
@@ -71,10 +108,12 @@ struct WellnessLeagueView: View {
             .animation(.spring(response: 0.35, dampingFraction: 0.82), value: reactionNotice)
             .sheet(isPresented: $showingSharingSetup) {
                 SharingPreviewSheet(
-                    useLocalScore: $useLocalScore,
-                    sleepGoalMinutes: $sleepGoalMinutes,
-                    stepsGoal: $stepsGoal,
-                    screenTimeGoalMinutes: $screenTimeGoalMinutes
+                    friends: friends,
+                    context: insightContext,
+                    useLocalScore: $model.useLocalScoreInPreview,
+                    sleepGoalMinutes: $model.sleepGoalMinutes,
+                    stepsGoal: $model.stepsGoal,
+                    screenTimeGoalMinutes: $model.screenTimeGoalMinutes
                 )
             }
             .task {
@@ -82,17 +121,27 @@ struct WellnessLeagueView: View {
                     await model.refresh()
                 }
             }
+            .task {
+                while !Task.isCancelled {
+                    try? await Task.sleep(for: .seconds(60))
+                    scoringDate = .now
+                }
+            }
         }
     }
 
     private var previewBanner: some View {
         HStack(spacing: 10) {
-            Image(systemName: "sparkles")
-                .foregroundStyle(.yellow)
+            Image(systemName: hasLiveLeague ? "person.3.fill" : "sparkles")
+                .foregroundStyle(hasLiveLeague ? .green : .yellow)
             VStack(alignment: .leading, spacing: 2) {
-                Text("Preview league")
+                Text(hasLiveLeague ? "Friend league" : "Preview league")
                     .font(.subheadline.weight(.bold))
-                Text("Friends and reactions are sample data for now.")
+                Text(
+                    hasLiveLeague
+                        ? "Real aggregate snapshots imported from friends."
+                        : "Friends and reactions are clearly labeled sample data."
+                )
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -179,7 +228,7 @@ struct WellnessLeagueView: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Text("Your point mix")
                         .font(.headline)
-                    Text(useLocalScore ? "Calculated on this iPhone" : "Sample preview score")
+                    Text(isUsingLocalScore ? "Calculated on this iPhone" : "Sample preview score")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -194,28 +243,28 @@ struct WellnessLeagueView: View {
                     title: "Sleep",
                     symbol: "bed.double.fill",
                     points: scorePoints(for: .sleep),
-                    goal: "\(sleepGoalMinutes / 60)h goal",
+                    goal: "\(model.sleepGoalMinutes / 60)h goal",
                     tint: .indigo
                 )
                 MetricPointTile(
                     title: "Steps",
                     symbol: "figure.walk",
                     points: scorePoints(for: .steps),
-                    goal: stepsGoal.formatted(.number.notation(.compactName)),
+                    goal: model.stepsGoal.formatted(.number.notation(.compactName)),
                     tint: .green
                 )
                 MetricPointTile(
                     title: "Screen",
                     symbol: "moon.zzz.fill",
                     points: scorePoints(for: .screen),
-                    goal: "≤ \(screenTimeGoalMinutes / 60)h",
+                    goal: "≤ \(model.screenTimeGoalMinutes / 60)h",
                     tint: .orange
                 )
             }
 
             HStack(spacing: 8) {
                 Image(systemName: "info.circle.fill")
-                Text("Each personal goal is worth the same 10 points per day. More is not always better.")
+                Text("Each available personal goal is worth 10 points per day. Missing measurements earn no points and remain unknown—not failed.")
             }
             .font(.caption)
             .foregroundStyle(.secondary)
@@ -235,9 +284,13 @@ struct WellnessLeagueView: View {
             }
 
             HStack(alignment: .bottom, spacing: 8) {
-                PodiumPerson(standing: standings[1], place: 2, height: 84)
+                if standings.count > 1 {
+                    PodiumPerson(standing: standings[1], place: 2, height: 84)
+                }
                 PodiumPerson(standing: standings[0], place: 1, height: 112)
-                PodiumPerson(standing: standings[2], place: 3, height: 68)
+                if standings.count > 2 {
+                    PodiumPerson(standing: standings[2], place: 3, height: 68)
+                }
             }
         }
         .leagueCard()
@@ -273,14 +326,15 @@ struct WellnessLeagueView: View {
                     standing: standing,
                     rank: index + 1,
                     onReact: { reaction in
-                        reactionNotice = "Preview · \(reaction.rawValue) to \(standing.name)"
+                        reactionNotice = "Preview only · \(reaction.rawValue) to \(standing.name)"
                         Task {
                             try? await Task.sleep(for: .seconds(2.2))
                             if reactionNotice?.contains(standing.name) == true {
                                 reactionNotice = nil
                             }
                         }
-                    }
+                    },
+                    allowsReactions: !hasLiveLeague
                 )
 
                 if index < standings.count - 1 {
@@ -292,7 +346,8 @@ struct WellnessLeagueView: View {
     }
 
     private var weeklyDuel: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        let opponent = standings.first { !$0.isCurrentUser }
+        return VStack(alignment: .leading, spacing: 14) {
             HStack {
                 Label("Friendly duel", systemImage: "flame.fill")
                     .font(.headline)
@@ -303,40 +358,48 @@ struct WellnessLeagueView: View {
                     .foregroundStyle(.pink)
             }
 
-            HStack(spacing: 12) {
-                Avatar(initials: "YOU", accent: .violet, size: 48)
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack {
-                        Text("You")
-                        Spacer()
-                        Text("\(displayedUserPoints)")
-                            .fontWeight(.bold)
-                        Text("vs")
-                            .foregroundStyle(.secondary)
-                        Text("159")
-                            .fontWeight(.bold)
-                        Text("Priya")
-                    }
-                    GeometryReader { proxy in
-                        ZStack(alignment: .leading) {
-                            Capsule().fill(Color(.systemGray5))
-                            Capsule()
-                                .fill(
-                                    LinearGradient(
-                                        colors: [.purple, .pink],
-                                        startPoint: .leading,
-                                        endPoint: .trailing
-                                    )
-                                )
-                                .frame(
-                                    width: proxy.size.width
-                                        * min(Double(displayedUserPoints) / 210, 1)
-                                )
+            if let opponent {
+                HStack(spacing: 12) {
+                    Avatar(initials: "YOU", accent: .violet, size: 48)
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            Text("You")
+                            Spacer()
+                            Text("\(displayedUserPoints)")
+                                .fontWeight(.bold)
+                            Text("vs")
+                                .foregroundStyle(.secondary)
+                            Text("\(opponent.points)")
+                                .fontWeight(.bold)
+                            Text(opponent.name)
                         }
+                        GeometryReader { proxy in
+                            ZStack(alignment: .leading) {
+                                Capsule().fill(Color(.systemGray5))
+                                Capsule()
+                                    .fill(
+                                        LinearGradient(
+                                            colors: [.purple, .pink],
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        )
+                                    )
+                                    .frame(
+                                        width: proxy.size.width
+                                            * min(Double(displayedUserPoints) / 210, 1)
+                                    )
+                            }
+                        }
+                        .frame(height: 10)
                     }
-                    .frame(height: 10)
+                    Avatar(initials: opponent.initials, accent: opponent.accent, size: 48)
                 }
-                Avatar(initials: "PR", accent: .lime, size: 48)
+            } else {
+                Button("Import a friend's league pass") {
+                    showingSharingSetup = true
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(.purple)
             }
         }
         .leagueCard()
@@ -350,7 +413,7 @@ struct WellnessLeagueView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text("Compete without oversharing")
                     .font(.subheadline.weight(.bold))
-                Text("A future friend service would receive only weekly points, streak, and profile display fields after explicit opt-in—not sleep times, step counts, Screen Time totals, or HealthKit samples.")
+                Text("League passes contain only weekly points, active days, streak, focus, display name, and week ID—not sleep times, step counts, Screen Time totals, app activity, or HealthKit samples. Nothing is uploaded by the app.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -382,7 +445,7 @@ struct WellnessLeagueView: View {
     }
 
     private var timeRemaining: String {
-        let remaining = max(0, weeklyScore.periodEnd.timeIntervalSince(.now))
+        let remaining = max(0, weeklyScore.periodEnd.timeIntervalSince(scoringDate))
         let days = Int(remaining) / 86_400
         let hours = (Int(remaining) % 86_400) / 3_600
         return "\(days)d \(hours)h"
@@ -395,7 +458,7 @@ struct WellnessLeagueView: View {
     }
 
     private func scorePoints(for metric: ScoreMetric) -> Int {
-        if useLocalScore {
+        if isUsingLocalScore {
             switch metric {
             case .sleep: weeklyScore.sleepPoints
             case .steps: weeklyScore.stepsPoints
@@ -405,9 +468,21 @@ struct WellnessLeagueView: View {
             switch metric {
             case .sleep: 60
             case .steps: 70
-            case .screen: 44
+            case .screen: 40
             }
         }
+    }
+
+    private func initials(for name: String) -> String {
+        let words = name.split(whereSeparator: \.isWhitespace)
+        let value = words.prefix(2).compactMap(\.first).map(String.init).joined()
+        return value.isEmpty ? "FR" : value.uppercased()
+    }
+
+    private func accent(for profileIdentifier: String) -> LeagueAccent {
+        let checksum = profileIdentifier.unicodeScalars.reduce(0) { $0 + Int($1.value) }
+        let accents = LeagueAccent.allCases.filter { $0 != .violet }
+        return accents[checksum % accents.count]
     }
 }
 
@@ -510,6 +585,7 @@ private struct StandingRow: View {
     let standing: LeagueStanding
     let rank: Int
     let onReact: (FriendReaction) -> Void
+    let allowsReactions: Bool
 
     var body: some View {
         HStack(spacing: 10) {
@@ -549,7 +625,7 @@ private struct StandingRow: View {
                 .font(.caption2)
                 .foregroundStyle(.secondary)
 
-            if !standing.isCurrentUser {
+            if !standing.isCurrentUser && allowsReactions {
                 Menu {
                     ForEach(FriendReaction.allCases) { reaction in
                         Button(reaction.rawValue) { onReact(reaction) }
@@ -603,11 +679,14 @@ private struct Avatar: View {
 }
 
 private struct SharingPreviewSheet: View {
+    @Bindable var friends: LeagueFriendsViewModel
+    let context: WellnessInsightContext
     @Binding var useLocalScore: Bool
     @Binding var sleepGoalMinutes: Int
     @Binding var stepsGoal: Int
     @Binding var screenTimeGoalMinutes: Int
     @Environment(\.dismiss) private var dismiss
+    @State private var showingLeaguePassImporter = false
 
     var body: some View {
         NavigationStack {
@@ -632,32 +711,34 @@ private struct SharingPreviewSheet: View {
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Friends, without the overshare")
                             .font(.title2.bold())
-                        Text("This is a local UI prototype. No account or social server is connected yet.")
+                        Text("Share a small aggregate league pass, then import friends' passes. No account, cloud database, or app server is involved.")
                             .foregroundStyle(.secondary)
                     }
 
                     sharingRow(
                         symbol: "trophy.fill",
-                        title: "Friends could see",
-                        detail: "Weekly points, rank, streak, display name, and preset reactions.",
+                        title: "Friends can see",
+                        detail: "Weekly points, active days, streak, focus, display name, and week ID.",
                         tint: .orange
                     )
                     sharingRow(
                         symbol: "eye.slash.fill",
-                        title: "Friends would never see",
+                        title: "Friends never receive",
                         detail: "Exact sleep times, step totals, Screen Time, app activity, or raw HealthKit samples.",
                         tint: .green
                     )
                     sharingRow(
                         symbol: "hand.raised.fill",
-                        title: "Controls required before launch",
-                        detail: "Explicit opt-in, withdrawal and deletion, private profiles, invite approval, mute, block, and report.",
+                        title: "You stay in control",
+                        detail: "Creating and sharing a pass is explicit. Removing a friend deletes their cached profile from this device.",
                         tint: .purple
                     )
 
+                    friendSyncControls
+
                     Toggle(isOn: $useLocalScore) {
                         VStack(alignment: .leading, spacing: 3) {
-                            Text("Use my local score in preview")
+                            Text("Use my local score in sample preview")
                                 .font(.headline)
                             Text("Changes only this screen. Nothing is uploaded.")
                                 .font(.caption)
@@ -707,7 +788,7 @@ private struct SharingPreviewSheet: View {
                 }
                 .padding()
             }
-            .navigationTitle("Sharing preview")
+            .navigationTitle("Friends & goals")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
@@ -716,6 +797,87 @@ private struct SharingPreviewSheet: View {
             }
         }
         .presentationDetents([.medium, .large])
+        .fileImporter(
+            isPresented: $showingLeaguePassImporter,
+            allowedContentTypes: [.json],
+            allowsMultipleSelection: false
+        ) { result in
+            switch result {
+            case .success(let urls):
+                if let url = urls.first {
+                    friends.importLeaguePass(from: url)
+                }
+            case .failure:
+                friends.errorMessage = "The league pass could not be opened."
+            }
+        }
+    }
+
+    private var friendSyncControls: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text("Private league passes")
+                .font(.headline)
+
+            TextField(
+                "Display name",
+                text: Binding(
+                    get: { friends.state.myDisplayName },
+                    set: { friends.updateDisplayName($0) }
+                )
+            )
+            .textInputAutocapitalization(.words)
+            .textFieldStyle(.roundedBorder)
+
+            HStack {
+                Button("Prepare my pass") {
+                    friends.prepareLeaguePass(context: context)
+                }
+                .buttonStyle(.bordered)
+                Button("Import friend's pass") {
+                    showingLeaguePassImporter = true
+                }
+                .buttonStyle(.bordered)
+            }
+
+            if let shareURL = friends.shareURL {
+                ShareLink(item: shareURL) {
+                    Label("Share my league pass", systemImage: "square.and.arrow.up")
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(.purple)
+            }
+
+            ForEach(friends.state.cachedFriends) { profile in
+                HStack {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(profile.displayName)
+                            .font(.subheadline.weight(.semibold))
+                        Text("\(profile.weeklyPoints) points · \(profile.streakDays)-day streak")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    Button(role: .destructive) {
+                        friends.removeFriend(profileIdentifier: profile.profileIdentifier)
+                    } label: {
+                        Image(systemName: "trash")
+                    }
+                    .accessibilityLabel("Remove \(profile.displayName)")
+                }
+            }
+
+            if let errorMessage = friends.errorMessage {
+                Label(errorMessage, systemImage: "exclamationmark.triangle.fill")
+                    .font(.caption)
+                    .foregroundStyle(.red)
+            }
+
+            Text("League passes are intentionally local and are not cheat-resistant. A production public competition still needs authenticated score submission and abuse controls.")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+        }
+        .padding()
+        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 18))
     }
 
     private func sharingRow(

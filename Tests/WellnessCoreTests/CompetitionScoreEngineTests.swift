@@ -88,4 +88,42 @@ final class CompetitionScoreEngineTests: XCTestCase {
             0
         )
     }
+
+    func testStreakUsesYesterdayGraceAndStopsAtMissingDay() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+        let today = try XCTUnwrap(
+            calendar.date(from: DateComponents(year: 2026, month: 8, day: 20, hour: 12))
+        )
+        let yesterday = try XCTUnwrap(calendar.date(byAdding: .day, value: -1, to: today))
+        let twoDaysAgo = try XCTUnwrap(calendar.date(byAdding: .day, value: -2, to: today))
+        let fourDaysAgo = try XCTUnwrap(calendar.date(byAdding: .day, value: -4, to: today))
+        let records = [
+            DailyWellnessRecord(date: yesterday, steps: 8_000),
+            DailyWellnessRecord(date: twoDaysAgo, sleepMinutes: 420),
+            DailyWellnessRecord(date: fourDaysAgo, screenTimeMinutes: 100),
+        ]
+
+        XCTAssertEqual(
+            CompetitionScoreEngine.currentStreak(
+                records: records,
+                through: today,
+                calendar: calendar
+            ),
+            2
+        )
+    }
+
+    func testWeekIdentifierUsesWeekYear() throws {
+        var calendar = Calendar(identifier: .iso8601)
+        calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+        let date = try XCTUnwrap(
+            calendar.date(from: DateComponents(year: 2026, month: 1, day: 1))
+        )
+
+        XCTAssertEqual(
+            CompetitionScoreEngine.weekIdentifier(containing: date, calendar: calendar),
+            "2026-W01"
+        )
+    }
 }

@@ -12,6 +12,8 @@ The coach tries each backend in this order:
 
 Every backend receives only the same aggregated trend JSON. Raw HealthKit and Screen Time samples are never sent to the language model.
 
+The Personal AI screen uses the same Core AI resource discovery pattern but keeps its own stateful `LanguageModelSession` for conversation. Its replaceable runtime contract and merge checklist are documented in [PERSONAL_AI.md](PERSONAL_AI.md).
+
 ## Requirements
 
 - Xcode 27 or newer.

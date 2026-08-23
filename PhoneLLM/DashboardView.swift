@@ -10,11 +10,13 @@ extension DeviceActivityReport.Context {
 struct DashboardView: View {
     @Bindable var model: WellnessViewModel
     @Environment(\.scenePhase) private var scenePhase
+    @State private var showingExport = false
 
     private var reportFilter: DeviceActivityFilter {
         let calendar = Calendar.autoupdatingCurrent
-        let start = calendar.startOfDay(for: .now)
-        let end = calendar.date(byAdding: .day, value: 1, to: start) ?? .now
+        let today = calendar.startOfDay(for: .now)
+        let start = calendar.date(byAdding: .day, value: -6, to: today) ?? today
+        let end = calendar.date(byAdding: .day, value: 1, to: today) ?? .now
         return DeviceActivityFilter(segment: .daily(during: DateInterval(start: start, end: end)))
     }
 
@@ -25,7 +27,9 @@ struct DashboardView: View {
                     permissionCard
                     computerCoachCard
                     metricGrid
+                    dailyPathCard
                     coachingCard
+                    exportCard
 
                     if model.screenTimeAuthorized {
                         screenTimeReport
@@ -64,6 +68,16 @@ struct DashboardView: View {
                 Button("OK", role: .cancel) {}
             } message: {
                 Text(model.errorMessage ?? "Unknown error")
+            }
+            .fileExporter(
+                isPresented: $showingExport,
+                document: WellnessExportDocument(records: model.records, goals: model.goals),
+                contentType: .json,
+                defaultFilename: "LessOfALoser-wellness-export"
+            ) { result in
+                if case let .failure(error) = result {
+                    model.errorMessage = "The wellness export could not be saved. \(error.localizedDescription)"
+                }
             }
         }
     }
@@ -119,7 +133,7 @@ struct DashboardView: View {
                     if model.isCheckingComputerCoach {
                         ProgressView()
                     } else {
-                        Text(model.computerCoachEnabled ? "Test Connection" : "Quick Connect")
+                        Text(model.computerCoachButtonTitle)
                     }
                 }
                 .buttonStyle(.borderedProminent)
@@ -197,13 +211,86 @@ struct DashboardView: View {
         .cardStyle()
     }
 
+    private var dailyPathCard: some View {
+        let context = model.insightContext
+
+        return VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .top) {
+                VStack(alignment: .leading, spacing: 3) {
+                    Label("Today's path", systemImage: "point.topleft.down.to.point.bottomright.curvepath")
+                        .font(.headline)
+                    Text(pathSummary(context))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+                Menu {
+                    Picker("Wellness focus", selection: $model.wellnessFocus) {
+                        ForEach(WellnessFocus.allCases, id: \.self) { focus in
+                            Label(focus.displayName, systemImage: focusSymbol(focus))
+                                .tag(focus)
+                        }
+                    }
+                } label: {
+                    Label(model.wellnessFocus.displayName, systemImage: focusSymbol(model.wellnessFocus))
+                        .font(.caption.weight(.semibold))
+                }
+            }
+
+            if context.availableGoalCount > 0 {
+                ProgressView(
+                    value: Double(context.achievedGoalCount),
+                    total: Double(context.availableGoalCount)
+                )
+                .tint(.purple)
+            }
+
+            ForEach(context.dailyGoals) { progress in
+                DailyGoalRow(progress: progress)
+            }
+
+            Label(
+                "Unavailable measurements stay unknown and never count as a missed goal.",
+                systemImage: "shield.checkered"
+            )
+            .font(.caption)
+            .foregroundStyle(.secondary)
+        }
+        .cardStyle()
+    }
+
+    private var exportCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Label("Take your review with you", systemImage: "square.and.arrow.up")
+                .font(.headline)
+
+            Text("Export the same aggregate daily totals used by the app. The file can be opened in the companion web dashboard for a retrospective review and PDF report.")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+
+            Button("Export aggregate report data") {
+                showingExport = true
+            }
+            .buttonStyle(.borderedProminent)
+            .disabled(model.records.isEmpty)
+
+            Label(
+                "You choose where the file goes. It excludes raw HealthKit samples, app identities, and model conversations.",
+                systemImage: "lock.shield.fill"
+            )
+            .font(.caption)
+            .foregroundStyle(.secondary)
+        }
+        .cardStyle()
+    }
+
     private var screenTimeReport: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Today's Screen Time")
                 .font(.headline)
             DeviceActivityReport(.dailyWellness, filter: reportFilter)
                 .frame(minHeight: 150)
-            Text("The privacy-preserving report extension writes only the coarse daily total to the shared on-device container.")
+            Text("The privacy-preserving report extension backfills up to seven coarse daily totals to the shared on-device container.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
@@ -247,11 +334,102 @@ struct DashboardView: View {
         return "LessOfALoser requests read-only Health access and individual Screen Time access. Processing stays on this iPhone."
     }
 
+    private func pathSummary(_ context: WellnessInsightContext) -> String {
+        guard context.availableGoalCount > 0 else {
+            return "Waiting for today's connected measurements"
+        }
+        return "\(context.achievedGoalCount) of \(context.availableGoalCount) available goals reached"
+    }
+
+    private func focusSymbol(_ focus: WellnessFocus) -> String {
+        switch focus {
+        case .balance: "circle.grid.2x2.fill"
+        case .sleep: "bed.double.fill"
+        case .movement: "figure.walk"
+        case .screenTime: "iphone"
+        }
+    }
+
     private var errorBinding: Binding<Bool> {
         Binding(
             get: { model.errorMessage != nil },
             set: { if !$0 { model.errorMessage = nil } }
         )
+    }
+}
+
+private struct DailyGoalRow: View {
+    let progress: WellnessGoalProgress
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: statusSymbol)
+                .font(.headline)
+                .foregroundStyle(statusColor)
+                .frame(width: 38, height: 38)
+                .background(statusColor.opacity(0.12), in: Circle())
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(progress.title)
+                    .font(.subheadline.weight(.semibold))
+                Text(detail)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            Spacer()
+            Text(statusLabel)
+                .font(.caption2.weight(.bold))
+                .foregroundStyle(statusColor)
+        }
+        .accessibilityElement(children: .combine)
+    }
+
+    private var statusSymbol: String {
+        switch progress.status {
+        case .achieved: "checkmark.circle.fill"
+        case .open: "circle.dashed"
+        case .unavailable: "questionmark.circle"
+        }
+    }
+
+    private var statusColor: Color {
+        switch progress.status {
+        case .achieved: .green
+        case .open: .purple
+        case .unavailable: .secondary
+        }
+    }
+
+    private var statusLabel: String {
+        switch progress.status {
+        case .achieved: "REACHED"
+        case .open: "IN PROGRESS"
+        case .unavailable: "UNAVAILABLE"
+        }
+    }
+
+    private var detail: String {
+        guard let current = progress.currentValue else {
+            return "No measurement is available yet"
+        }
+
+        switch progress.metric {
+        case .sleep, .screenTime:
+            return "\(minutes(current)) · goal \(comparison) \(minutes(progress.targetValue))"
+        case .steps:
+            return "\(Int(current.rounded()).formatted()) · goal \(comparison) \(Int(progress.targetValue.rounded()).formatted())"
+        }
+    }
+
+    private var comparison: String {
+        progress.direction == .atLeast ? "at least" : "at most"
+    }
+
+    private func minutes(_ value: Double) -> String {
+        let rounded = Int(value.rounded())
+        let hours = rounded / 60
+        let minutes = rounded % 60
+        return minutes == 0 ? "\(hours)h" : "\(hours)h \(minutes)m"
     }
 }
 

@@ -36,7 +36,7 @@ targets:
       path: PhoneLLM/Info.plist
       properties:
         CFBundleDisplayName: LessOfALoser
-        NSHealthShareUsageDescription: LessOfALoser reads your sleep and step data to create private, on-device wellness summaries.
+        NSHealthShareUsageDescription: LessOfALoser reads your sleep and step data to create wellness summaries. If you enable Computer Coach, an aggregate trend summary is sent to your selected computer over Tailscale.
         CFBundleURLTypes:
           - CFBundleURLName: com.santitower.LessOfALoser.connect
             CFBundleURLSchemes:
@@ -46,6 +46,11 @@ targets:
         UILaunchScreen: {}
     entitlements:
       path: PhoneLLM/PhoneLLM.entitlements
+      properties:
+        com.apple.developer.healthkit: true
+        com.apple.developer.family-controls: true
+        com.apple.security.application-groups:
+          - group.com.santitower.LessOfALoser
     dependencies:
       - target: WellnessCore
       - target: ScreenTimeReport
@@ -68,7 +73,7 @@ targets:
       path: PhoneLLM/CoreAI-Info.plist
       properties:
         CFBundleDisplayName: LessOfALoser Core AI
-        NSHealthShareUsageDescription: LessOfALoser reads your sleep and step data to create private, on-device wellness summaries.
+        NSHealthShareUsageDescription: LessOfALoser reads your sleep and step data to create wellness summaries. If you enable Computer Coach, an aggregate trend summary is sent to your selected computer over Tailscale.
         CFBundleURLTypes:
           - CFBundleURLName: com.santitower.LessOfALoser.connect
             CFBundleURLSchemes:
@@ -78,6 +83,11 @@ targets:
         UILaunchScreen: {}
     entitlements:
       path: PhoneLLM/PhoneLLM.entitlements
+      properties:
+        com.apple.developer.healthkit: true
+        com.apple.developer.family-controls: true
+        com.apple.security.application-groups:
+          - group.com.santitower.LessOfALoser
     dependencies:
       - target: WellnessCore
       - target: ScreenTimeReport
@@ -120,6 +130,10 @@ targets:
           NSExtensionPointIdentifier: com.apple.deviceactivityui.report-extension
     entitlements:
       path: ScreenTimeReport/ScreenTimeReport.entitlements
+      properties:
+        com.apple.developer.family-controls: true
+        com.apple.security.application-groups:
+          - group.com.santitower.LessOfALoser
     dependencies:
       - target: WellnessCore
     settings:

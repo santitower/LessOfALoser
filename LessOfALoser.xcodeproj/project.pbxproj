@@ -7,23 +7,36 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0C25C8AD37975D0BD477362B /* PersonalInsightEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 458FB558EBC881CCBF5ED117 /* PersonalInsightEngine.swift */; };
 		0D805D7F61A6686CD74C6C13 /* WellnessCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4E2D7D4FC4A7A80FE7DC701C /* WellnessCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		12A5FD03283F2F2C13B5C9BA /* PersonalAssistantView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DA14C9150E7B3440A7E4E17 /* PersonalAssistantView.swift */; };
+		1666A2C6182EEEE0B73F5FAD /* WellnessExportDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F2EEEFFAE27D47C759C7062 /* WellnessExportDocument.swift */; };
+		16DB479C51032DD2952B4EAC /* LeagueFriendsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA898979384445A6D44897AE /* LeagueFriendsViewModel.swift */; };
 		1ED257F377524679C85991EB /* WellnessCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4E2D7D4FC4A7A80FE7DC701C /* WellnessCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		24441ABF0D45D3F921E707DB /* LeagueFriends.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA952C92DF2AC21F50F3092E /* LeagueFriends.swift */; };
 		257456699E810F888ED5DC72 /* HealthKitClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B687AB2FAADECADF5746FE /* HealthKitClient.swift */; };
 		2C6BFFD492C2922EE31C9A35 /* CompetitionScoreEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793976FBF1200E37F0AE22B7 /* CompetitionScoreEngine.swift */; };
 		2D5D938D5E6FAF439100611E /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF124BE7B43F93F49F9886E6 /* DashboardView.swift */; };
 		314D94E4792A9DD8DAB5649A /* RemoteWellnessCoach.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBE51A8C1C67C3728265E36E /* RemoteWellnessCoach.swift */; };
+		38C7CDAA451878B22D798B08 /* WellnessExportDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F2EEEFFAE27D47C759C7062 /* WellnessExportDocument.swift */; };
 		3BDD96676D4F28F36F8C81AD /* WellnessLeagueModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = C755DADB7B819FE6F0C4905D /* WellnessLeagueModels.swift */; };
+		3D8B7E3E3EEDBD7F889EE2BC /* PersonalAssistantView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DA14C9150E7B3440A7E4E17 /* PersonalAssistantView.swift */; };
 		3F6E08E634BB173358215FED /* SharedScreenTimeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96341AEF4B0B674825461ACB /* SharedScreenTimeStore.swift */; };
 		4189BA61D02F71807B26D93B /* HealthKitClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B687AB2FAADECADF5746FE /* HealthKitClient.swift */; };
+		4DCBB63DB511984B32B8049B /* WellnessExportPackageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CC7CCE0948EEBAFD52B0080 /* WellnessExportPackageTests.swift */; };
 		4FF8AF4E7968CE55A4BF0AEF /* WellnessLeagueView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6FF6DA082AE9F39B545ED9 /* WellnessLeagueView.swift */; };
 		51A286136C0D5E1417A4013F /* TrendEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F3EBC52343CCCFD59C38A7 /* TrendEngineTests.swift */; };
 		56FA5F975911474CBC4A6C32 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1F7A205B4CB268B4DEB6A414 /* Assets.xcassets */; };
 		58A353D0EEC07760C9AFDD4D /* WellnessViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F30CA44BB69A8B581CA484C /* WellnessViewModel.swift */; };
 		647D40F3EFA5E742912384E1 /* WellnessCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4E2D7D4FC4A7A80FE7DC701C /* WellnessCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6B26B8BE11213621CF989E9C /* PersonalModelRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72E93C0A1AA5BFCAAE642C11 /* PersonalModelRuntime.swift */; };
 		6CE867F828E7D2600632BBE0 /* LocalWellnessCoach.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34056156A1848A176AA74C6E /* LocalWellnessCoach.swift */; };
 		729F1F1898EE70E8F1E389B2 /* WellnessCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E2D7D4FC4A7A80FE7DC701C /* WellnessCore.framework */; };
+		74142ED04F3F9386870C634B /* PersonalAssistantViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D781D97E5573DC25C8332F13 /* PersonalAssistantViewModel.swift */; };
+		74C26227C3B3D1802C52B8F9 /* WellnessInsightEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4420CBBBFE46DB02835CC28 /* WellnessInsightEngine.swift */; };
+		77C7DA308E048017D546D3E2 /* PersonalInsightEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02B6F478B4D0997E93C8D5E8 /* PersonalInsightEngineTests.swift */; };
 		7BCBCB3216ACEA470EE54AB2 /* CoreAILM in Frameworks */ = {isa = PBXBuildFile; productRef = 6576D66ACF1A5D9745E62869 /* CoreAILM */; };
+		7DFBEB84347049DDB52BEB0D /* WellnessExportPackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E2011E8542B5FE1FF8AA1EE /* WellnessExportPackage.swift */; };
 		858623ED8374F17C607DB0F5 /* RemoteWellnessCoach.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBE51A8C1C67C3728265E36E /* RemoteWellnessCoach.swift */; };
 		8E49C119EF96F0C276B97DEF /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF124BE7B43F93F49F9886E6 /* DashboardView.swift */; };
 		91D4DFFAC54DF79C3EB77A3C /* WellnessCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E2D7D4FC4A7A80FE7DC701C /* WellnessCore.framework */; };
@@ -33,14 +46,20 @@
 		AA746B03FEA93F1AF6DBDC07 /* TrendEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161CC6EE27FAAEE8D6AA569A /* TrendEngine.swift */; };
 		ABFEC5BF4920B454C005CF15 /* ScreenTimeReportExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD5180ADFEDD7A2BEFE938B0 /* ScreenTimeReportExtension.swift */; };
 		AF6FD9BCA22AF122C2F9944C /* WellnessCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E2D7D4FC4A7A80FE7DC701C /* WellnessCore.framework */; };
+		B22D3E1AEA958074F58DFF24 /* PersonalAssistantViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D781D97E5573DC25C8332F13 /* PersonalAssistantViewModel.swift */; };
 		BA41BA89B4F3B44D0E4646D8 /* LocalWellnessCoach.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34056156A1848A176AA74C6E /* LocalWellnessCoach.swift */; };
 		C2F4BC7020BDB386CBB2E88C /* WellnessLeagueModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = C755DADB7B819FE6F0C4905D /* WellnessLeagueModels.swift */; };
 		C8C9527C066AC0D9E712CE29 /* DailyWellnessRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70E798602998E55645F8F46C /* DailyWellnessRecord.swift */; };
 		CB2BA4C826F31007E654064E /* CompetitionScoreEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C64F69BCF179FADE39E055A8 /* CompetitionScoreEngineTests.swift */; };
 		CB5C7CF41D754D4970D531BE /* PhoneLLMApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F6ED0DAACB376CC876AE3F /* PhoneLLMApp.swift */; };
 		D4DDDC5B356A8F96C4A2CAF8 /* ScreenTimeReport.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 0C95EC6752A031ED77332DC9 /* ScreenTimeReport.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		E54C63C8C1B5291FF25EE065 /* LeagueFriendsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91B52C61B7F492C773BE2B73 /* LeagueFriendsTests.swift */; };
 		E5708DC7A005EF9AACC4ED37 /* WellnessViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F30CA44BB69A8B581CA484C /* WellnessViewModel.swift */; };
+		F218E460F8FE3982ACEE64BF /* LeagueFriendsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA898979384445A6D44897AE /* LeagueFriendsViewModel.swift */; };
+		F6BCDD8D138162340E1456E6 /* PersonalModelRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72E93C0A1AA5BFCAAE642C11 /* PersonalModelRuntime.swift */; };
+		F75B6332C31991BAA9F7A628 /* WellnessInsightEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8582F41DA9BC7B2C399EC291 /* WellnessInsightEngineTests.swift */; };
 		F87E55D6920737E537F94F70 /* SharedScreenTimeStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CEAA3F4E81D22D73F6B5861 /* SharedScreenTimeStoreTests.swift */; };
+		FBCFE98EF81C65F3638E58B7 /* LeagueFriendsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC14C1CA64535AEBEBE0DBD9 /* LeagueFriendsStore.swift */; };
 		FE8DF25B78896B79B16EB765 /* PhoneLLMApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F6ED0DAACB376CC876AE3F /* PhoneLLMApp.swift */; };
 		FFA6B64176F8ABA4C3EB0DEF /* ScreenTimeReport.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 0C95EC6752A031ED77332DC9 /* ScreenTimeReport.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -149,6 +168,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		02B6F478B4D0997E93C8D5E8 /* PersonalInsightEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalInsightEngineTests.swift; sourceTree = "<group>"; };
 		0C95EC6752A031ED77332DC9 /* ScreenTimeReport.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = ScreenTimeReport.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		161CC6EE27FAAEE8D6AA569A /* TrendEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrendEngine.swift; sourceTree = "<group>"; };
 		1F7A205B4CB268B4DEB6A414 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -156,20 +176,33 @@
 		34056156A1848A176AA74C6E /* LocalWellnessCoach.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalWellnessCoach.swift; sourceTree = "<group>"; };
 		3CEAA3F4E81D22D73F6B5861 /* SharedScreenTimeStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedScreenTimeStoreTests.swift; sourceTree = "<group>"; };
 		41F3EBC52343CCCFD59C38A7 /* TrendEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrendEngineTests.swift; sourceTree = "<group>"; };
+		458FB558EBC881CCBF5ED117 /* PersonalInsightEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalInsightEngine.swift; sourceTree = "<group>"; };
 		4E2D7D4FC4A7A80FE7DC701C /* WellnessCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WellnessCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6CC7CCE0948EEBAFD52B0080 /* WellnessExportPackageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WellnessExportPackageTests.swift; sourceTree = "<group>"; };
+		6DA14C9150E7B3440A7E4E17 /* PersonalAssistantView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalAssistantView.swift; sourceTree = "<group>"; };
 		6F30CA44BB69A8B581CA484C /* WellnessViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WellnessViewModel.swift; sourceTree = "<group>"; };
 		70E798602998E55645F8F46C /* DailyWellnessRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyWellnessRecord.swift; sourceTree = "<group>"; };
+		72E93C0A1AA5BFCAAE642C11 /* PersonalModelRuntime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalModelRuntime.swift; sourceTree = "<group>"; };
 		793976FBF1200E37F0AE22B7 /* CompetitionScoreEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompetitionScoreEngine.swift; sourceTree = "<group>"; };
+		7F2EEEFFAE27D47C759C7062 /* WellnessExportDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WellnessExportDocument.swift; sourceTree = "<group>"; };
+		8582F41DA9BC7B2C399EC291 /* WellnessInsightEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WellnessInsightEngineTests.swift; sourceTree = "<group>"; };
+		8E2011E8542B5FE1FF8AA1EE /* WellnessExportPackage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WellnessExportPackage.swift; sourceTree = "<group>"; };
 		9168697F7F8D6741B40AD131 /* LessOfALoserCoreAI.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = LessOfALoserCoreAI.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		91B52C61B7F492C773BE2B73 /* LeagueFriendsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeagueFriendsTests.swift; sourceTree = "<group>"; };
 		93F6ED0DAACB376CC876AE3F /* PhoneLLMApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneLLMApp.swift; sourceTree = "<group>"; };
 		96341AEF4B0B674825461ACB /* SharedScreenTimeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedScreenTimeStore.swift; sourceTree = "<group>"; };
+		BC14C1CA64535AEBEBE0DBD9 /* LeagueFriendsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeagueFriendsStore.swift; sourceTree = "<group>"; };
 		BD5180ADFEDD7A2BEFE938B0 /* ScreenTimeReportExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenTimeReportExtension.swift; sourceTree = "<group>"; };
+		C4420CBBBFE46DB02835CC28 /* WellnessInsightEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WellnessInsightEngine.swift; sourceTree = "<group>"; };
 		C64F69BCF179FADE39E055A8 /* CompetitionScoreEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompetitionScoreEngineTests.swift; sourceTree = "<group>"; };
 		C6B687AB2FAADECADF5746FE /* HealthKitClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitClient.swift; sourceTree = "<group>"; };
 		C755DADB7B819FE6F0C4905D /* WellnessLeagueModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WellnessLeagueModels.swift; sourceTree = "<group>"; };
+		CA898979384445A6D44897AE /* LeagueFriendsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeagueFriendsViewModel.swift; sourceTree = "<group>"; };
+		CA952C92DF2AC21F50F3092E /* LeagueFriends.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeagueFriends.swift; sourceTree = "<group>"; };
 		CB6FF6DA082AE9F39B545ED9 /* WellnessLeagueView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WellnessLeagueView.swift; sourceTree = "<group>"; };
 		CBE51A8C1C67C3728265E36E /* RemoteWellnessCoach.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteWellnessCoach.swift; sourceTree = "<group>"; };
 		D541C4227BF90D1A6F690D60 /* PhoneLLM.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = PhoneLLM.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D781D97E5573DC25C8332F13 /* PersonalAssistantViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalAssistantViewModel.swift; sourceTree = "<group>"; };
 		DA7C692CFE34979775CA81D2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		DF32C6FD4BC0F1202A1E8BFE /* ScreenTimeReport.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ScreenTimeReport.entitlements; sourceTree = "<group>"; };
 		E80C9CED94731FBE88BA310D /* WellnessCoreTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = WellnessCoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -247,8 +280,12 @@
 			isa = PBXGroup;
 			children = (
 				C64F69BCF179FADE39E055A8 /* CompetitionScoreEngineTests.swift */,
+				91B52C61B7F492C773BE2B73 /* LeagueFriendsTests.swift */,
+				02B6F478B4D0997E93C8D5E8 /* PersonalInsightEngineTests.swift */,
 				3CEAA3F4E81D22D73F6B5861 /* SharedScreenTimeStoreTests.swift */,
 				41F3EBC52343CCCFD59C38A7 /* TrendEngineTests.swift */,
+				6CC7CCE0948EEBAFD52B0080 /* WellnessExportPackageTests.swift */,
+				8582F41DA9BC7B2C399EC291 /* WellnessInsightEngineTests.swift */,
 			);
 			path = WellnessCoreTests;
 			sourceTree = "<group>";
@@ -259,10 +296,15 @@
 				1F7A205B4CB268B4DEB6A414 /* Assets.xcassets */,
 				FF124BE7B43F93F49F9886E6 /* DashboardView.swift */,
 				C6B687AB2FAADECADF5746FE /* HealthKitClient.swift */,
+				CA898979384445A6D44897AE /* LeagueFriendsViewModel.swift */,
 				34056156A1848A176AA74C6E /* LocalWellnessCoach.swift */,
+				6DA14C9150E7B3440A7E4E17 /* PersonalAssistantView.swift */,
+				D781D97E5573DC25C8332F13 /* PersonalAssistantViewModel.swift */,
+				72E93C0A1AA5BFCAAE642C11 /* PersonalModelRuntime.swift */,
 				2A78AE5F6BE1CB050A18BD63 /* PhoneLLM.entitlements */,
 				93F6ED0DAACB376CC876AE3F /* PhoneLLMApp.swift */,
 				CBE51A8C1C67C3728265E36E /* RemoteWellnessCoach.swift */,
+				7F2EEEFFAE27D47C759C7062 /* WellnessExportDocument.swift */,
 				C755DADB7B819FE6F0C4905D /* WellnessLeagueModels.swift */,
 				CB6FF6DA082AE9F39B545ED9 /* WellnessLeagueView.swift */,
 				6F30CA44BB69A8B581CA484C /* WellnessViewModel.swift */,
@@ -283,8 +325,13 @@
 			children = (
 				793976FBF1200E37F0AE22B7 /* CompetitionScoreEngine.swift */,
 				70E798602998E55645F8F46C /* DailyWellnessRecord.swift */,
+				CA952C92DF2AC21F50F3092E /* LeagueFriends.swift */,
+				BC14C1CA64535AEBEBE0DBD9 /* LeagueFriendsStore.swift */,
+				458FB558EBC881CCBF5ED117 /* PersonalInsightEngine.swift */,
 				96341AEF4B0B674825461ACB /* SharedScreenTimeStore.swift */,
 				161CC6EE27FAAEE8D6AA569A /* TrendEngine.swift */,
+				8E2011E8542B5FE1FF8AA1EE /* WellnessExportPackage.swift */,
+				C4420CBBBFE46DB02835CC28 /* WellnessInsightEngine.swift */,
 			);
 			path = WellnessCore;
 			sourceTree = "<group>";
@@ -506,8 +553,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				CB2BA4C826F31007E654064E /* CompetitionScoreEngineTests.swift in Sources */,
+				E54C63C8C1B5291FF25EE065 /* LeagueFriendsTests.swift in Sources */,
+				77C7DA308E048017D546D3E2 /* PersonalInsightEngineTests.swift in Sources */,
 				F87E55D6920737E537F94F70 /* SharedScreenTimeStoreTests.swift in Sources */,
 				51A286136C0D5E1417A4013F /* TrendEngineTests.swift in Sources */,
+				4DCBB63DB511984B32B8049B /* WellnessExportPackageTests.swift in Sources */,
+				F75B6332C31991BAA9F7A628 /* WellnessInsightEngineTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -517,9 +568,14 @@
 			files = (
 				2D5D938D5E6FAF439100611E /* DashboardView.swift in Sources */,
 				4189BA61D02F71807B26D93B /* HealthKitClient.swift in Sources */,
+				F218E460F8FE3982ACEE64BF /* LeagueFriendsViewModel.swift in Sources */,
 				BA41BA89B4F3B44D0E4646D8 /* LocalWellnessCoach.swift in Sources */,
+				3D8B7E3E3EEDBD7F889EE2BC /* PersonalAssistantView.swift in Sources */,
+				74142ED04F3F9386870C634B /* PersonalAssistantViewModel.swift in Sources */,
+				6B26B8BE11213621CF989E9C /* PersonalModelRuntime.swift in Sources */,
 				FE8DF25B78896B79B16EB765 /* PhoneLLMApp.swift in Sources */,
 				314D94E4792A9DD8DAB5649A /* RemoteWellnessCoach.swift in Sources */,
+				38C7CDAA451878B22D798B08 /* WellnessExportDocument.swift in Sources */,
 				3BDD96676D4F28F36F8C81AD /* WellnessLeagueModels.swift in Sources */,
 				A80D9C1710827C535DEF308A /* WellnessLeagueView.swift in Sources */,
 				58A353D0EEC07760C9AFDD4D /* WellnessViewModel.swift in Sources */,
@@ -540,9 +596,14 @@
 			files = (
 				8E49C119EF96F0C276B97DEF /* DashboardView.swift in Sources */,
 				257456699E810F888ED5DC72 /* HealthKitClient.swift in Sources */,
+				16DB479C51032DD2952B4EAC /* LeagueFriendsViewModel.swift in Sources */,
 				6CE867F828E7D2600632BBE0 /* LocalWellnessCoach.swift in Sources */,
+				12A5FD03283F2F2C13B5C9BA /* PersonalAssistantView.swift in Sources */,
+				B22D3E1AEA958074F58DFF24 /* PersonalAssistantViewModel.swift in Sources */,
+				F6BCDD8D138162340E1456E6 /* PersonalModelRuntime.swift in Sources */,
 				CB5C7CF41D754D4970D531BE /* PhoneLLMApp.swift in Sources */,
 				858623ED8374F17C607DB0F5 /* RemoteWellnessCoach.swift in Sources */,
+				1666A2C6182EEEE0B73F5FAD /* WellnessExportDocument.swift in Sources */,
 				C2F4BC7020BDB386CBB2E88C /* WellnessLeagueModels.swift in Sources */,
 				4FF8AF4E7968CE55A4BF0AEF /* WellnessLeagueView.swift in Sources */,
 				E5708DC7A005EF9AACC4ED37 /* WellnessViewModel.swift in Sources */,
@@ -555,8 +616,13 @@
 			files = (
 				2C6BFFD492C2922EE31C9A35 /* CompetitionScoreEngine.swift in Sources */,
 				C8C9527C066AC0D9E712CE29 /* DailyWellnessRecord.swift in Sources */,
+				24441ABF0D45D3F921E707DB /* LeagueFriends.swift in Sources */,
+				FBCFE98EF81C65F3638E58B7 /* LeagueFriendsStore.swift in Sources */,
+				0C25C8AD37975D0BD477362B /* PersonalInsightEngine.swift in Sources */,
 				3F6E08E634BB173358215FED /* SharedScreenTimeStore.swift in Sources */,
 				AA746B03FEA93F1AF6DBDC07 /* TrendEngine.swift in Sources */,
+				7DFBEB84347049DDB52BEB0D /* WellnessExportPackage.swift in Sources */,
+				74C26227C3B3D1802C52B8F9 /* WellnessInsightEngine.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

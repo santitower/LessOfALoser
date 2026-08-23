@@ -6,10 +6,19 @@ import WellnessCore
 @MainActor
 @Observable
 final class WellnessViewModel {
+    private enum PreferenceKey {
+        static let useLocalScore = "competition.useLocalScoreInPreview"
+        static let sleepGoalMinutes = "competition.sleepGoalMinutes"
+        static let stepsGoal = "competition.stepsGoal"
+        static let screenTimeGoalMinutes = "competition.screenTimeGoalMinutes"
+        static let wellnessFocus = "wellness.focus"
+    }
+
     private let healthClient = HealthKitClient()
     private let screenTimeStore = SharedScreenTimeStore()
     private let coach = LocalWellnessCoach()
     private let remoteCoach = RemoteWellnessCoach()
+    private let preferences: UserDefaults
 
     var records: [DailyWellnessRecord] = []
     var briefing = CoachingBrief.welcome
@@ -21,21 +30,93 @@ final class WellnessViewModel {
     var computerCoachStatus = "Not connected"
     var isCheckingComputerCoach = false
     var computerCoachEnabled = false
+    var isConnectionLinkPending = false
+    var useLocalScoreInPreview: Bool {
+        didSet { preferences.set(useLocalScoreInPreview, forKey: PreferenceKey.useLocalScore) }
+    }
+    var sleepGoalMinutes: Int {
+        didSet { preferences.set(sleepGoalMinutes, forKey: PreferenceKey.sleepGoalMinutes) }
+    }
+    var stepsGoal: Int {
+        didSet { preferences.set(stepsGoal, forKey: PreferenceKey.stepsGoal) }
+    }
+    var screenTimeGoalMinutes: Int {
+        didSet {
+            preferences.set(
+                screenTimeGoalMinutes,
+                forKey: PreferenceKey.screenTimeGoalMinutes
+            )
+        }
+    }
+    var wellnessFocus: WellnessFocus {
+        didSet { preferences.set(wellnessFocus.rawValue, forKey: PreferenceKey.wellnessFocus) }
+    }
 
     var today: DailyWellnessRecord? {
         records.sorted { $0.date < $1.date }.last
     }
 
     var trendSummary: WellnessTrendSummary? {
-        TrendEngine.summarize(records: records)
+        insightContext.trendSummary
     }
 
-    init() {
+    var goals: WellnessGoals {
+        WellnessGoals(
+            sleepMinutes: Double(sleepGoalMinutes),
+            steps: Double(stepsGoal),
+            screenTimeMinutes: Double(screenTimeGoalMinutes)
+        )
+    }
+
+    var insightContext: WellnessInsightContext {
+        insightContext(for: .now)
+    }
+
+    var computerCoachButtonTitle: String {
+        if isConnectionLinkPending { return "Connect & Use" }
+        return computerCoachEnabled ? "Test Connection" : "Quick Connect"
+    }
+
+    func insightContext(for date: Date) -> WellnessInsightContext {
+        WellnessInsightEngine.makeContext(
+            records: records,
+            goals: goals,
+            focus: wellnessFocus,
+            for: date
+        )
+    }
+
+    init(preferences: UserDefaults = .standard) {
+        self.preferences = preferences
+        self.useLocalScoreInPreview = preferences.object(
+            forKey: PreferenceKey.useLocalScore
+        ) == nil ? false : preferences.bool(forKey: PreferenceKey.useLocalScore)
+        self.sleepGoalMinutes = preferences.object(
+            forKey: PreferenceKey.sleepGoalMinutes
+        ) == nil ? 420 : min(
+            max(preferences.integer(forKey: PreferenceKey.sleepGoalMinutes), 300),
+            600
+        )
+        self.stepsGoal = preferences.object(
+            forKey: PreferenceKey.stepsGoal
+        ) == nil ? 8_000 : min(
+            max(preferences.integer(forKey: PreferenceKey.stepsGoal), 1_000),
+            30_000
+        )
+        self.screenTimeGoalMinutes = preferences.object(
+            forKey: PreferenceKey.screenTimeGoalMinutes
+        ) == nil ? 180 : min(
+            max(preferences.integer(forKey: PreferenceKey.screenTimeGoalMinutes), 30),
+            720
+        )
+        self.wellnessFocus = preferences.string(forKey: PreferenceKey.wellnessFocus)
+            .flatMap(WellnessFocus.init(rawValue:)) ?? .balance
         screenTimeAuthorized = AuthorizationCenter.shared.authorizationStatus == .approved
         if let configuration = RemoteCoachConfigurationStore.load() {
             computerCoachURL = configuration.baseURL.absoluteString
             computerCoachStatus = "Configured · tap Test Connection"
             computerCoachEnabled = true
+            isConnectionLinkPending = false
         }
     }
 
@@ -63,6 +144,7 @@ final class WellnessViewModel {
         RemoteCoachConfigurationStore.remove()
         computerCoachStatus = "Not connected"
         computerCoachEnabled = false
+        isConnectionLinkPending = false
         await refresh()
     }
 
@@ -70,7 +152,10 @@ final class WellnessViewModel {
         do {
             let configuration = try RemoteCoachConfiguration.parseConnectionLink(url)
             computerCoachURL = configuration.baseURL.absoluteString
-            await connectComputerCoach()
+            computerCoachStatus =
+                "Connection link loaded · review the address and tap Connect & Use"
+            isConnectionLinkPending = true
+            errorMessage = nil
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -103,8 +188,10 @@ final class WellnessViewModel {
 
         do {
             var latestRecords = try await healthClient.fetchDailyRecords(days: 29)
-            if let screenSnapshot = try? screenTimeStore.load() {
-                latestRecords = merge(screenSnapshot, into: latestRecords)
+            if let screenSnapshots = try? screenTimeStore.loadHistory() {
+                for snapshot in screenSnapshots {
+                    latestRecords = merge(snapshot, into: latestRecords)
+                }
             }
             records = latestRecords
 
