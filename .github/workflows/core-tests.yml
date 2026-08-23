@@ -9,7 +9,31 @@ jobs:
   test:
     runs-on: macos-15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Run deterministic wellness engine tests
         run: swift test
 
+  ios-build:
+    runs-on: xcode-27
+    steps:
+      - uses: actions/checkout@v5
+      - name: Show Xcode toolchain
+        run: xcodebuild -version
+      - name: Build standard iOS app
+        run: >-
+          xcodebuild
+          -project LessOfALoser.xcodeproj
+          -scheme LessOfALoser
+          -sdk iphonesimulator
+          -destination 'generic/platform=iOS Simulator'
+          CODE_SIGNING_ALLOWED=NO
+          build
+      - name: Build experimental Core AI app
+        run: >-
+          xcodebuild
+          -project LessOfALoser.xcodeproj
+          -scheme LessOfALoser-CoreAI
+          -sdk iphonesimulator
+          -destination 'generic/platform=iOS Simulator'
+          CODE_SIGNING_ALLOWED=NO
+          build
