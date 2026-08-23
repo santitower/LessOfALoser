@@ -25,6 +25,8 @@ No personal health data belongs in this repository, and the starter contains no 
 - Optional Computer Coach using Tailscale HTTPS and Ollama on a personal computer
 - In-app Quick Connect plus a one-tap `lessofaloser://connect` link
 - Aggregate-only gateway validation, Tailscale identity checks, and safe automatic fallback
+- Wellness League preview with weekly consistency points, rank movement, podiums, streaks, duels, and preset friend reactions
+- Synthetic social profiles and a local-score toggle while the consent/account backend remains intentionally unimplemented
 - Swift unit tests and a GitHub Actions workflow
 
 ## Requirements
@@ -38,6 +40,8 @@ No personal health data belongs in this repository, and the starter contains no 
 The optional custom-model build requires Xcode 27, iOS 27, and a separately exported Core AI model bundle. See [the Core AI integration guide](docs/CORE_AI.md).
 
 An older iPhone can instead use a computer running Tailscale, Python 3, and Ollama. See [the Private Computer Coach guide](docs/REMOTE_COMPUTER.md).
+
+The social competition tab is a local, synthetic-data UI prototype. See [the Wellness Leagues design and backend boundary](docs/SOCIAL_LEAGUES.md).
 
 HealthKit and Device Activity should be tested on a physical iPhone. The deterministic `WellnessCore` package can be tested on macOS without Xcode.
 
@@ -108,6 +112,7 @@ Sources/WellnessCore/     Shared models, trend engine, local snapshot store
 Tests/WellnessCoreTests/  Platform-independent tests
 docs/CORE_AI.md            Qwen/Core AI export and build instructions
 docs/REMOTE_COMPUTER.md    Tailscale Computer Coach setup and security model
+docs/SOCIAL_LEAGUES.md     Competition score, consent, and backend boundary
 project.yml               XcodeGen project definition
 ```
 
