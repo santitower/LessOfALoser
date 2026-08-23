@@ -11,4 +11,3 @@ tokenizer/
 ```
 
 The recommended first model is the iOS export of `Qwen/Qwen2.5-1.5B-Instruct`. See `docs/CORE_AI.md` for export and installation instructions.
-

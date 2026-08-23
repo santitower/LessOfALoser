@@ -29,4 +29,3 @@ rsync -a \
 
 echo "Installed Core AI resources in ${DESTINATION}"
 echo "Regenerate the project with: xcodegen generate"
-
