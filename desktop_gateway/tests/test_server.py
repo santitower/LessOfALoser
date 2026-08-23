@@ -155,6 +155,10 @@ class GatewayValidationTests(unittest.TestCase):
         self.assertNotIn("tools", payload)
         self.assertEqual(payload["format"]["additionalProperties"], False)
         self.assertEqual(set(payload["format"]["properties"]), {"actionCategory"})
+        self.assertEqual(
+            payload["format"]["properties"]["actionCategory"]["enum"],
+            ["sleepRoutine", "maintainRoutine"],
+        )
 
     def test_invalid_utf8_returns_json_error(self):
         server = make_server(replace(self.config, port=0))

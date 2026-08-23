@@ -169,6 +169,39 @@ def canonical_observations(summary: Mapping[str, Any]) -> list[str]:
     return observations or ["Not enough comparable data is available yet."]
 
 
+def primary_observation_metric(summary: Mapping[str, Any]) -> str | None:
+    observation = summary["observations"][0] if summary["observations"] else ""
+    return next(
+        (
+            metric
+            for keyword, metric in {
+                "sleep": "sleep",
+                "step": "steps",
+                "screen": "screenTime",
+            }.items()
+            if keyword in observation.lower()
+        ),
+        None,
+    )
+
+
+def brief_schema(summary: Mapping[str, Any]) -> dict[str, Any]:
+    category = {
+        "sleep": "sleepRoutine",
+        "steps": "shortWalk",
+        "screenTime": "screenBreak",
+    }.get(primary_observation_metric(summary))
+    allowed_categories = [category, "maintainRoutine"] if category else ["maintainRoutine"]
+    return {
+        "type": "object",
+        "properties": {
+            "actionCategory": {"type": "string", "enum": allowed_categories},
+        },
+        "required": ["actionCategory"],
+        "additionalProperties": False,
+    }
+
+
 def validate_summary(summary: Any) -> dict[str, Any]:
     if not isinstance(summary, dict) or set(summary) != SUMMARY_KEYS:
         raise GatewayError(
@@ -245,18 +278,7 @@ def validate_brief(value: Any, summary: dict[str, Any]) -> dict[str, str]:
         )
 
     supplied_observation = summary["observations"][0] if summary["observations"] else ""
-    observation_metric = next(
-        (
-            metric
-            for keyword, metric in {
-                "sleep": "sleep",
-                "step": "steps",
-                "screen": "screenTime",
-            }.items()
-            if keyword in supplied_observation.lower()
-        ),
-        None,
-    )
+    observation_metric = primary_observation_metric(summary)
     if required_metric and observation_metric and required_metric != observation_metric:
         raise GatewayError(
             HTTPStatus.UNPROCESSABLE_ENTITY,
@@ -301,7 +323,7 @@ def build_ollama_payload(summary: dict[str, Any], model: str) -> dict[str, Any]:
         ],
         "stream": False,
         "think": False,
-        "format": BRIEF_SCHEMA,
+        "format": brief_schema(summary),
         "keep_alive": "10m",
         "options": {"temperature": 0, "num_ctx": 4096},
     }
