@@ -31,11 +31,13 @@ No personal health data belongs in this repository, and the starter contains no 
 
 ## Requirements
 
-- Xcode 26 or newer
+- The full Xcode 26 app, not only Xcode Command Line Tools or XcodeGen
 - An iPhone running iOS 26 or newer
 - An Apple Developer team for device signing
 - An Apple Intelligence-compatible device with Apple Intelligence enabled for generated coaching
 - Apple approval for the Family Controls distribution entitlement before App Store or TestFlight distribution
+
+Check [Apple's Xcode compatibility table](https://developer.apple.com/xcode/system-requirements/) before downloading. On macOS Sequoia 15.6 or newer, use Xcode 26.3; newer Xcode releases may require macOS Tahoe.
 
 The optional custom-model build requires Xcode 27, iOS 27, and a separately exported Core AI model bundle. See [the Core AI integration guide](docs/CORE_AI.md).
 
@@ -49,20 +51,37 @@ HealthKit and Device Activity should be tested on a physical iPhone. The determi
 
 The repository uses [XcodeGen](https://github.com/yonaskolb/XcodeGen) so the project file is reproducible.
 
+First verify that the full Xcode app is installed:
+
+```sh
+xcodebuild -version
+```
+
+If that command says the active developer directory is Command Line Tools, install [Xcode 26.3 from Apple Developer Downloads](https://developer.apple.com/download/all/?q=Xcode%2026.3), move `Xcode.app` to `/Applications`, open it once, and select it:
+
+```sh
+sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+```
+
+Then run the checked setup helper from the repository:
+
 ```sh
 brew install xcodegen
-xcodegen generate
-open LessOfALoser.xcodeproj
+./scripts/open-project.sh
 ```
+
+The helper generates the project and explicitly opens it with Xcode. If Xcode is missing, it stops with a useful installation message instead of opening the `.xcodeproj` package as a Finder folder.
 
 In Xcode:
 
-1. Select your development team for the `PhoneLLM` and `ScreenTimeReport` targets.
-2. Replace the `com.santitower` bundle prefix if you do not control it.
-3. Register the `group.com.santitower.LessOfALoser` App Group for both targets.
-4. Enable HealthKit on the app target.
-5. Enable Family Controls on the app and report extension targets.
-6. Build to a physical iPhone and grant Health and Screen Time access.
+1. Choose the `LessOfALoser` scheme, not the experimental `LessOfALoser-CoreAI` scheme.
+2. For a quick UI demo, select an installed iOS 26 simulator and press Run.
+3. For real Health and Screen Time data, select your development team for the `PhoneLLM` and `ScreenTimeReport` targets.
+4. Replace the `com.santitower` bundle prefix if you do not control it.
+5. Register the `group.com.santitower.LessOfALoser` App Group for both targets.
+6. Enable HealthKit on the app target.
+7. Enable Family Controls on the app and report extension targets.
+8. Build to a physical iPhone and grant Health and Screen Time access.
 
 For distribution, request the Family Controls managed capability for both the app and report extension identifiers in the Apple Developer portal.
 
