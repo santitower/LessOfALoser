@@ -31,10 +31,10 @@ final class TrendEngineTests: XCTestCase {
 
         let summary = try XCTUnwrap(TrendEngine.summarize(records: records))
 
-        XCTAssertEqual(summary.sleep.baselineAverage, 420, accuracy: 0.001)
-        XCTAssertEqual(summary.steps.baselineAverage, 9_000, accuracy: 0.001)
-        XCTAssertEqual(summary.screenTime.baselineAverage, 210, accuracy: 0.001)
-        XCTAssertEqual(summary.sleep.percentChange, -10, accuracy: 0.001)
+        XCTAssertEqual(try XCTUnwrap(summary.sleep.baselineAverage), 420, accuracy: 0.001)
+        XCTAssertEqual(try XCTUnwrap(summary.steps.baselineAverage), 9_000, accuracy: 0.001)
+        XCTAssertEqual(try XCTUnwrap(summary.screenTime.baselineAverage), 210, accuracy: 0.001)
+        XCTAssertEqual(try XCTUnwrap(summary.sleep.percentChange), -10, accuracy: 0.001)
         XCTAssertEqual(summary.baselineDayCount, 2)
         XCTAssertEqual(summary.observations.count, 3)
     }
@@ -63,4 +63,3 @@ final class TrendEngineTests: XCTestCase {
         XCTAssertEqual(record.dataCoverage, 2.0 / 3.0, accuracy: 0.001)
     }
 }
-
