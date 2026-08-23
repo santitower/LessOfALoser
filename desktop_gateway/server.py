@@ -46,14 +46,7 @@ ACTION_TEXT = {
     "maintainRoutine": "Keep following the routine that feels sustainable for you.",
 }
 
-BRIEF_SCHEMA = {
-    "type": "object",
-    "properties": {
-        "actionCategory": {"type": "string", "enum": list(ACTION_TEXT)},
-    },
-    "required": ["actionCategory"],
-    "additionalProperties": False,
-}
+MODEL_RESPONSE_KEYS = frozenset({"actionCategory"})
 
 SUMMARY_KEYS = {
     "date",
@@ -251,7 +244,7 @@ def validate_summary(summary: Any) -> dict[str, Any]:
 
 
 def validate_brief(value: Any, summary: dict[str, Any]) -> dict[str, str]:
-    if not isinstance(value, dict) or set(value) != set(BRIEF_SCHEMA["required"]):
+    if not isinstance(value, dict) or set(value) != MODEL_RESPONSE_KEYS:
         raise GatewayError(
             HTTPStatus.BAD_GATEWAY,
             "invalid_model_response",

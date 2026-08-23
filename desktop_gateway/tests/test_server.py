@@ -155,10 +155,32 @@ class GatewayValidationTests(unittest.TestCase):
         self.assertNotIn("tools", payload)
         self.assertEqual(payload["format"]["additionalProperties"], False)
         self.assertEqual(set(payload["format"]["properties"]), {"actionCategory"})
-        self.assertEqual(
-            payload["format"]["properties"]["actionCategory"]["enum"],
-            ["sleepRoutine", "maintainRoutine"],
+
+    def test_ollama_schema_constrains_actions_to_primary_metric(self):
+        cases = (
+            ("sleep", ["sleepRoutine", "maintainRoutine"]),
+            ("steps", ["shortWalk", "maintainRoutine"]),
+            ("screenTime", ["screenBreak", "maintainRoutine"]),
+            (None, ["maintainRoutine"]),
         )
+        metric_order = ("sleep", "steps", "screenTime")
+        for primary_metric, expected_categories in cases:
+            with self.subTest(primary_metric=primary_metric):
+                summary = valid_summary()
+                for metric in metric_order:
+                    if metric == primary_metric:
+                        break
+                    summary[metric] = {
+                        "current": None,
+                        "baselineAverage": None,
+                        "percentChange": None,
+                    }
+                summary["observations"] = canonical_observations(summary)
+                payload = build_ollama_payload(summary, "test-model")
+                self.assertEqual(
+                    payload["format"]["properties"]["actionCategory"]["enum"],
+                    expected_categories,
+                )
 
     def test_invalid_utf8_returns_json_error(self):
         server = make_server(replace(self.config, port=0))
