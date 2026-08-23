@@ -88,4 +88,33 @@ final class CompetitionScoreEngineTests: XCTestCase {
             0
         )
     }
+
+    func testCompleteSevenDayHistoryCanReachAdvertisedMaximum() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.firstWeekday = 2
+        let monday = try XCTUnwrap(
+            calendar.date(from: DateComponents(year: 2026, month: 8, day: 17))
+        )
+        let records = try (0..<7).map { offset in
+            DailyWellnessRecord(
+                date: try XCTUnwrap(calendar.date(byAdding: .day, value: offset, to: monday)),
+                sleepMinutes: 420,
+                steps: 8_000,
+                screenTimeMinutes: 180
+            )
+        }
+
+        let score = CompetitionScoreEngine.weeklyScore(
+            records: records,
+            weekContaining: monday,
+            calendar: calendar
+        )
+
+        XCTAssertEqual(score.sleepPoints, 70)
+        XCTAssertEqual(score.stepsPoints, 70)
+        XCTAssertEqual(score.screenTimePoints, 70)
+        XCTAssertEqual(score.totalPoints, score.maximumPoints)
+        XCTAssertEqual(score.maximumPoints, 210)
+        XCTAssertEqual(score.activeDays, 7)
+    }
 }

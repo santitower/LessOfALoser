@@ -7,12 +7,14 @@ struct WellnessLeagueView: View {
     @AppStorage("competition.sleepGoalMinutes") private var sleepGoalMinutes = 420
     @AppStorage("competition.stepsGoal") private var stepsGoal = 8_000
     @AppStorage("competition.screenTimeGoalMinutes") private var screenTimeGoalMinutes = 180
+    @State private var scoringDate = Date.now
     @State private var showingSharingSetup = false
     @State private var reactionNotice: String?
 
     private var weeklyScore: WeeklyCompetitionScore {
         CompetitionScoreEngine.weeklyScore(
             records: model.records,
+            weekContaining: scoringDate,
             goals: WellnessGoals(
                 sleepMinutes: Double(sleepGoalMinutes),
                 steps: Double(stepsGoal),
@@ -22,7 +24,7 @@ struct WellnessLeagueView: View {
     }
 
     private var displayedUserPoints: Int {
-        useLocalScore ? weeklyScore.totalPoints : 174
+        useLocalScore ? weeklyScore.totalPoints : 170
     }
 
     private var standings: [LeagueStanding] {
@@ -80,6 +82,16 @@ struct WellnessLeagueView: View {
             .task {
                 if model.records.isEmpty {
                     await model.refresh()
+                }
+            }
+            .task {
+                while !Task.isCancelled {
+                    scoringDate = .now
+                    do {
+                        try await Task.sleep(for: .seconds(60))
+                    } catch {
+                        return
+                    }
                 }
             }
         }
@@ -215,7 +227,7 @@ struct WellnessLeagueView: View {
 
             HStack(spacing: 8) {
                 Image(systemName: "info.circle.fill")
-                Text("Each personal goal is worth the same 10 points per day. More is not always better.")
+                Text("Each personal goal is worth the same 10 points per day. Missing measurements earn no points and remain unknown.")
             }
             .font(.caption)
             .foregroundStyle(.secondary)
@@ -313,7 +325,7 @@ struct WellnessLeagueView: View {
                             .fontWeight(.bold)
                         Text("vs")
                             .foregroundStyle(.secondary)
-                        Text("159")
+                        Text("160")
                             .fontWeight(.bold)
                         Text("Priya")
                     }
@@ -382,7 +394,7 @@ struct WellnessLeagueView: View {
     }
 
     private var timeRemaining: String {
-        let remaining = max(0, weeklyScore.periodEnd.timeIntervalSince(.now))
+        let remaining = max(0, weeklyScore.periodEnd.timeIntervalSince(scoringDate))
         let days = Int(remaining) / 86_400
         let hours = (Int(remaining) % 86_400) / 3_600
         return "\(days)d \(hours)h"
@@ -405,7 +417,7 @@ struct WellnessLeagueView: View {
             switch metric {
             case .sleep: 60
             case .steps: 70
-            case .screen: 44
+            case .screen: 40
             }
         }
     }

@@ -18,7 +18,7 @@ No personal health data belongs in this repository, and the starter contains no 
 - Daily step totals using `HKStatisticsCollectionQuery`
 - Individual Screen Time authorization with Family Controls
 - Privacy-preserving `DeviceActivityReportExtension`
-- Coarse daily Screen Time sharing through a local App Group container
+- Up to seven coarse daily Screen Time totals in a local App Group container
 - 28-day baseline comparisons in the platform-independent `WellnessCore` module
 - On-device Foundation Models coaching with a deterministic fallback
 - Optional iOS 27 Core AI target for an exported Qwen 2.5 1.5B model
@@ -102,7 +102,7 @@ swift test
 
 ## Privacy boundary
 
-Screen Time is not a HealthKit database. Apple provides activity results inside a privacy-preserving report extension. This prototype stores only the aggregate number of daily activity minutes in a shared local App Group container. It does not persist app names, web domains, opaque application tokens, or raw activity events.
+Screen Time is not a HealthKit database. Apple provides activity results inside a privacy-preserving report extension. This prototype keeps at most seven aggregate daily activity-minute snapshots in a shared local App Group container so it can calculate the current week's score. It does not persist app names, web domains, opaque application tokens, or raw activity events, and it cannot backfill a day when the daily report was not produced.
 
 Before distributing this pattern, confirm it against the current Apple Developer Program terms and App Review requirements. A production version should include an accessible privacy policy, deletion controls, safety evaluations, and a formal review of its wellness claims.
 

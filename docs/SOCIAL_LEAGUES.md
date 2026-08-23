@@ -27,7 +27,9 @@ Each of the user's three personal goals is worth 10 points per day:
 - steps reach the user's chosen target; and
 - Screen Time remains at or below the user's chosen limit.
 
-Every category has equal weight. Passing a target by more does not earn more points. Missing measurements remain unknown rather than being treated as negative health signals. A week has a maximum of 210 points.
+Every category has equal weight. Passing a target by more does not earn more points. Missing measurements remain unknown and earn no points; they are not presented as failed health goals. A week has a maximum of 210 points.
+
+The iPhone retains at most seven locally generated aggregate Screen Time totals so current-week points can accumulate without uploading them. It cannot backfill a day when the privacy-preserving daily report was not produced.
 
 The default goals are examples and can be changed locally. They are not medical recommendations.
 
@@ -67,11 +69,13 @@ Before enabling uploads, implement and review:
 4. invite approval without uploading a user's entire contacts database;
 5. private profile, opt-out, unfriend, mute, block, and report controls;
 6. rate limits and replay protection for reactions and weekly score submissions;
-7. a versioned scoring contract and fair weekly timezone rules;
+7. a versioned scoring contract, a minimum-data-coverage policy, and fair weekly timezone rules;
 8. a privacy policy and App Review disclosure; and
 9. abuse reporting plus moderation operations before any free-form messages.
 
 Preset reactions are intentional. They allow playful competition without introducing an unmoderated chat system or permitting comments about a person's body, diagnosis, medication, or missing health data.
+
+Because unknown measurements earn no points, a production league must show data coverage clearly, must not label missing data as a failed health goal, and must not pressure people to grant optional Health or Screen Time access merely to remain eligible.
 
 ## Apple privacy considerations
 

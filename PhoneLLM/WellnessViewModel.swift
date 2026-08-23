@@ -103,8 +103,10 @@ final class WellnessViewModel {
 
         do {
             var latestRecords = try await healthClient.fetchDailyRecords(days: 29)
-            if let screenSnapshot = try? screenTimeStore.load() {
-                latestRecords = merge(screenSnapshot, into: latestRecords)
+            if let screenSnapshots = try? screenTimeStore.loadHistory() {
+                for snapshot in screenSnapshots {
+                    latestRecords = merge(snapshot, into: latestRecords)
+                }
             }
             records = latestRecords
 
