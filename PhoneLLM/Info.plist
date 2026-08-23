@@ -18,10 +18,21 @@
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.santitower.LessOfALoser.connect</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>lessofaloser</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>NSHealthShareUsageDescription</key>
-	<string>LessOfALoser reads your sleep and step data to create private, on-device wellness summaries.</string>
+	<string>LessOfALoser reads your sleep and step data to create wellness summaries. If you enable Computer Coach, an aggregate trend summary is sent to your selected computer over Tailscale.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

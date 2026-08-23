@@ -36,7 +36,11 @@ targets:
       path: PhoneLLM/Info.plist
       properties:
         CFBundleDisplayName: LessOfALoser
-        NSHealthShareUsageDescription: LessOfALoser reads your sleep and step data to create private, on-device wellness summaries.
+        NSHealthShareUsageDescription: LessOfALoser reads your sleep and step data to create wellness summaries. If you enable Computer Coach, an aggregate trend summary is sent to your selected computer over Tailscale.
+        CFBundleURLTypes:
+          - CFBundleURLName: com.santitower.LessOfALoser.connect
+            CFBundleURLSchemes:
+              - lessofaloser
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: false
         UILaunchScreen: {}
@@ -64,7 +68,11 @@ targets:
       path: PhoneLLM/CoreAI-Info.plist
       properties:
         CFBundleDisplayName: LessOfALoser Core AI
-        NSHealthShareUsageDescription: LessOfALoser reads your sleep and step data to create private, on-device wellness summaries.
+        NSHealthShareUsageDescription: LessOfALoser reads your sleep and step data to create wellness summaries. If you enable Computer Coach, an aggregate trend summary is sent to your selected computer over Tailscale.
+        CFBundleURLTypes:
+          - CFBundleURLName: com.santitower.LessOfALoser.connect
+            CFBundleURLSchemes:
+              - lessofaloser
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: false
         UILaunchScreen: {}

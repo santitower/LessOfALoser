@@ -7,12 +7,15 @@ import CoreAILanguageModels
 #endif
 
 enum CoachingSource: String, Equatable, Sendable {
+    case remoteComputer
     case coreAIQwen
     case appleSystemModel
     case deterministicRules
 
     var displayName: String {
         switch self {
+        case .remoteComputer:
+            "Computer · private AI"
         case .coreAIQwen:
             "Qwen · Core AI"
         case .appleSystemModel:
@@ -75,8 +78,18 @@ actor LocalWellnessCoach {
     private var attemptedCoreAILoad = false
     #endif
 
+    private let remoteCoach = RemoteWellnessCoach()
+
     func makeBrief(from summary: WellnessTrendSummary) async -> CoachingBrief {
         let fallback = fallbackBrief(from: summary)
+
+        if let configuration = RemoteCoachConfigurationStore.load(),
+           let remoteBrief = try? await remoteCoach.makeBrief(
+               from: summary,
+               using: configuration
+           ) {
+            return remoteBrief
+        }
 
         do {
             let encoder = JSONEncoder()

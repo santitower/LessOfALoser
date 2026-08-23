@@ -1,15 +1,15 @@
 # LessOfALoser
 
-LessOfALoser is an iPhone prototype that combines Apple Health sleep and step data with a coarse Screen Time total, then generates a private daily wellness brief on the phone.
+LessOfALoser is an iPhone prototype that combines Apple Health sleep and step data with a coarse Screen Time total, then generates a private daily wellness brief either on the phone or with a personal computer reached over Tailscale.
 
 The architecture deliberately keeps measurement and language generation separate:
 
 1. HealthKit and Device Activity provide user-authorized data.
 2. Swift calculates daily values and recent baselines.
 3. A deterministic rules layer creates a safe fallback.
-4. The on-device model explains only the verified summary.
+4. A selected private model explains only the verified summary.
 
-No personal health data belongs in this repository, and the starter contains no analytics or server integration.
+No personal health data belongs in this repository, and the starter contains no analytics or public cloud model integration.
 
 ## Included
 
@@ -22,6 +22,9 @@ No personal health data belongs in this repository, and the starter contains no 
 - 28-day baseline comparisons in the platform-independent `WellnessCore` module
 - On-device Foundation Models coaching with a deterministic fallback
 - Optional iOS 27 Core AI target for an exported Qwen 2.5 1.5B model
+- Optional Computer Coach using Tailscale HTTPS and Ollama on a personal computer
+- In-app Quick Connect plus a `lessofaloser://connect` link that prefills the computer address
+- Aggregate-only gateway validation, Tailscale identity checks, and safe automatic fallback
 - Swift unit tests and a GitHub Actions workflow
 
 ## Requirements
@@ -33,6 +36,8 @@ No personal health data belongs in this repository, and the starter contains no 
 - Apple approval for the Family Controls distribution entitlement before App Store or TestFlight distribution
 
 The optional custom-model build requires Xcode 27, iOS 27, and a separately exported Core AI model bundle. See [the Core AI integration guide](docs/CORE_AI.md).
+
+An older iPhone can instead use a computer running Tailscale, Python 3, and Ollama. See [the Private Computer Coach guide](docs/REMOTE_COMPUTER.md).
 
 HealthKit and Device Activity should be tested on a physical iPhone. The deterministic `WellnessCore` package can be tested on macOS without Xcode.
 
@@ -90,15 +95,19 @@ LessOfALoser is general wellness software. It must not:
 
 Every model receives aggregated JSON facts rather than raw HealthKit samples. If a custom model is missing or refuses a request, the app tries the next local backend before displaying the deterministic fallback.
 
+When Computer Coach is enabled, the same aggregate summary leaves the iPhone only through the user's private Tailscale network. The gateway recomputes canonical observations from the numeric trends and does not accept raw HealthKit samples, Screen Time app identities, arbitrary prompts, or model tools.
+
 ## Project layout
 
 ```text
 PhoneLLM/                 SwiftUI app, HealthKit client, local coach
 ScreenTimeReport/         Device Activity report extension
+desktop_gateway/          Aggregate-only Tailscale-to-Ollama gateway
 Resources/CoreAI/         Local-only custom model resources (Git-ignored)
 Sources/WellnessCore/     Shared models, trend engine, local snapshot store
 Tests/WellnessCoreTests/  Platform-independent tests
 docs/CORE_AI.md            Qwen/Core AI export and build instructions
+docs/REMOTE_COMPUTER.md    Tailscale Computer Coach setup and security model
 project.yml               XcodeGen project definition
 ```
 

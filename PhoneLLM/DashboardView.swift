@@ -23,6 +23,7 @@ struct DashboardView: View {
             ScrollView {
                 VStack(spacing: 18) {
                     permissionCard
+                    computerCoachCard
                     metricGrid
                     coachingCard
 
@@ -56,6 +57,9 @@ struct DashboardView: View {
                 guard phase == .active else { return }
                 Task { await model.refresh() }
             }
+            .onOpenURL { url in
+                Task { await model.handleConnectionLink(url) }
+            }
             .alert("Could not update", isPresented: errorBinding) {
                 Button("OK", role: .cancel) {}
             } message: {
@@ -69,7 +73,7 @@ struct DashboardView: View {
             Label("Connect your data", systemImage: "lock.shield.fill")
                 .font(.headline)
 
-            Text("LessOfALoser requests read-only Health access and individual Screen Time access. Processing stays on this iPhone.")
+            Text(dataProcessingDescription)
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
 
@@ -86,6 +90,57 @@ struct DashboardView: View {
                 .buttonStyle(.bordered)
                 .disabled(model.screenTimeAuthorized)
             }
+        }
+        .cardStyle()
+    }
+
+    private var computerCoachCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Label("Computer Coach", systemImage: "desktopcomputer")
+                .font(.headline)
+
+            Text("Connect through Tailscale to run the model on your own computer. Only the aggregate daily summary is sent—never raw HealthKit samples or app activity details.")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+
+            TextField(
+                "https://computer-name.tailnet.ts.net",
+                text: $model.computerCoachURL
+            )
+            .textInputAutocapitalization(.never)
+            .keyboardType(.URL)
+            .autocorrectionDisabled()
+            .textFieldStyle(.roundedBorder)
+
+            HStack {
+                Button {
+                    Task { await model.connectComputerCoach() }
+                } label: {
+                    if model.isCheckingComputerCoach {
+                        ProgressView()
+                    } else {
+                        Text(model.computerCoachButtonTitle)
+                    }
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(model.isCheckingComputerCoach || model.computerCoachURL.isEmpty)
+
+                if model.computerCoachEnabled {
+                    Button("Disconnect", role: .destructive) {
+                        Task { await model.disconnectComputerCoach() }
+                    }
+                    .buttonStyle(.bordered)
+                }
+            }
+
+            Label(
+                model.computerCoachStatus,
+                systemImage: model.computerCoachEnabled
+                    ? "checkmark.shield.fill"
+                    : "network.slash"
+            )
+            .font(.caption)
+            .foregroundStyle(model.computerCoachEnabled ? .green : .secondary)
         }
         .cardStyle()
     }
@@ -183,6 +238,13 @@ struct DashboardView: View {
     private var coverageDescription: String {
         guard let coverage = model.today?.dataCoverage else { return "0%" }
         return coverage.formatted(.percent.precision(.fractionLength(0)))
+    }
+
+    private var dataProcessingDescription: String {
+        if model.computerCoachEnabled {
+            return "LessOfALoser requests read-only Health access and individual Screen Time access. Raw measurements stay on this iPhone; only the displayed aggregate trend summary goes to your paired computer."
+        }
+        return "LessOfALoser requests read-only Health access and individual Screen Time access. Processing stays on this iPhone."
     }
 
     private var errorBinding: Binding<Bool> {
