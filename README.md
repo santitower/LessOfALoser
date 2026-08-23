@@ -1,6 +1,6 @@
 # LessOfALoser
 
-LessOfALoser is an iPhone prototype that combines Apple Health sleep and step data with a coarse Screen Time total, then generates a private daily wellness brief with Apple's on-device Foundation Models framework.
+LessOfALoser is an iPhone prototype that combines Apple Health sleep and step data with a coarse Screen Time total, then generates a private daily wellness brief on the phone.
 
 The architecture deliberately keeps measurement and language generation separate:
 
@@ -21,6 +21,7 @@ No personal health data belongs in this repository, and the starter contains no 
 - Coarse daily Screen Time sharing through a local App Group container
 - 28-day baseline comparisons in the platform-independent `WellnessCore` module
 - On-device Foundation Models coaching with a deterministic fallback
+- Optional iOS 27 Core AI target for an exported Qwen 2.5 1.5B model
 - Swift unit tests and a GitHub Actions workflow
 
 ## Requirements
@@ -30,6 +31,8 @@ No personal health data belongs in this repository, and the starter contains no 
 - An Apple Developer team for device signing
 - An Apple Intelligence-compatible device with Apple Intelligence enabled for generated coaching
 - Apple approval for the Family Controls distribution entitlement before App Store or TestFlight distribution
+
+The optional custom-model build requires Xcode 27, iOS 27, and a separately exported Core AI model bundle. See [the Core AI integration guide](docs/CORE_AI.md).
 
 HealthKit and Device Activity should be tested on a physical iPhone. The deterministic `WellnessCore` package can be tested on macOS without Xcode.
 
@@ -54,6 +57,15 @@ In Xcode:
 
 For distribution, request the Family Controls managed capability for both the app and report extension identifiers in the Apple Developer portal.
 
+## Custom local model
+
+The generated project contains two application schemes:
+
+- `LessOfALoser` targets iOS 26 and uses Apple's on-device system model when available.
+- `LessOfALoser-CoreAI` targets iOS 27 and first tries an exported Qwen model through Apple's `coreai-models` package.
+
+The Qwen model is not committed to GitHub. Follow [docs/CORE_AI.md](docs/CORE_AI.md) to export and install it locally. If the model is missing or cannot load, the same build automatically falls back to Apple's system model and then to deterministic rules.
+
 ## Run core tests
 
 ```sh
@@ -76,15 +88,17 @@ LessOfALoser is general wellness software. It must not:
 - recommend medication, supplement, or treatment changes;
 - interpret missing data as a negative health signal.
 
-The model receives aggregated JSON facts rather than raw HealthKit samples. If the model is unavailable or refuses a request, the app displays a deterministic fallback.
+Every model receives aggregated JSON facts rather than raw HealthKit samples. If a custom model is missing or refuses a request, the app tries the next local backend before displaying the deterministic fallback.
 
 ## Project layout
 
 ```text
 PhoneLLM/                 SwiftUI app, HealthKit client, local coach
 ScreenTimeReport/         Device Activity report extension
+Resources/CoreAI/         Local-only custom model resources (Git-ignored)
 Sources/WellnessCore/     Shared models, trend engine, local snapshot store
 Tests/WellnessCoreTests/  Platform-independent tests
+docs/CORE_AI.md            Qwen/Core AI export and build instructions
 project.yml               XcodeGen project definition
 ```
 
@@ -95,6 +109,7 @@ project.yml               XcodeGen project definition
 - [Device Activity reports](https://developer.apple.com/documentation/deviceactivity/deviceactivityreportextension)
 - [Family Controls entitlement](https://developer.apple.com/documentation/familycontrols/requesting-the-family-controls-entitlement)
 - [Foundation Models](https://developer.apple.com/documentation/foundationmodels)
+- [Apple Core AI Models](https://github.com/apple/coreai-models)
 
 ## Contributing
 

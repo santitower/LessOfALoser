@@ -16,8 +16,8 @@ Thanks for contributing to PhoneLLM.
 - Screen Time reports containing identifiable app or web activity
 - Provisioning profiles, certificates, tokens, or signing credentials
 - Model transcripts produced from a real person's health data
+- Exported `.aimodel` files, tokenizer bundles, or other large model binaries
 
 ## Product language
 
 Describe trends as observations or correlations. Do not add diagnosis, treatment, emergency monitoring, or causal health claims without an appropriate clinical and regulatory process.
-

@@ -125,7 +125,7 @@ struct DashboardView: View {
                 Label("Daily coach", systemImage: "sparkles")
                     .font(.headline)
                 Spacer()
-                Text(model.briefing.generatedLocally ? "On-device AI" : "Verified fallback")
+                Text(model.briefing.source.displayName)
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

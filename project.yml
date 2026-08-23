@@ -9,6 +9,10 @@ settings:
     SWIFT_VERSION: "6.0"
     SWIFT_STRICT_CONCURRENCY: targeted
     CODE_SIGN_STYLE: Automatic
+packages:
+  coreai-models:
+    url: https://github.com/apple/coreai-models.git
+    exactVersion: 0.1.0
 targets:
   WellnessCore:
     type: framework
@@ -24,7 +28,10 @@ targets:
     type: application
     platform: iOS
     sources:
-      - PhoneLLM
+      - path: PhoneLLM
+        excludes:
+          - Info.plist
+          - CoreAI-Info.plist
     info:
       path: PhoneLLM/Info.plist
       properties:
@@ -44,6 +51,53 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.santitower.LessOfALoser
         PRODUCT_NAME: LessOfALoser
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+
+  LessOfALoserCoreAI:
+    type: application
+    platform: iOS
+    sources:
+      - path: PhoneLLM
+        excludes:
+          - Info.plist
+          - CoreAI-Info.plist
+    info:
+      path: PhoneLLM/CoreAI-Info.plist
+      properties:
+        CFBundleDisplayName: LessOfALoser Core AI
+        NSHealthShareUsageDescription: LessOfALoser reads your sleep and step data to create private, on-device wellness summaries.
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+        UILaunchScreen: {}
+    entitlements:
+      path: PhoneLLM/PhoneLLM.entitlements
+    dependencies:
+      - target: WellnessCore
+      - target: ScreenTimeReport
+        embed: true
+      - package: coreai-models
+        product: CoreAILM
+    settings:
+      base:
+        IPHONEOS_DEPLOYMENT_TARGET: "27.0"
+        PRODUCT_BUNDLE_IDENTIFIER: com.santitower.LessOfALoser
+        PRODUCT_NAME: LessOfALoserCoreAI
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        ENABLE_USER_SCRIPT_SANDBOXING: false
+    postBuildScripts:
+      - name: Copy Core AI support resources
+        basedOnDependencyAnalysis: false
+        script: |
+          MODEL_DIR="${SRCROOT}/Resources/CoreAI"
+          DESTINATION="${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}"
+          if [ -f "${MODEL_DIR}/metadata.json" ]; then
+            rsync -a \
+              --exclude '*.aimodel' \
+              --exclude '.gitignore' \
+              --exclude 'README.md' \
+              "${MODEL_DIR}/" "${DESTINATION}/"
+          else
+            echo "warning: Core AI model not installed; the app will use its fallback model."
+          fi
 
   ScreenTimeReport:
     type: app-extension
@@ -83,6 +137,23 @@ schemes:
       targets:
         PhoneLLM: all
         WellnessCoreTests: [test]
+    test:
+      targets:
+        - WellnessCoreTests
+  LessOfALoser-CoreAI:
+    build:
+      targets:
+        LessOfALoserCoreAI: all
+        WellnessCoreTests: [test]
+      postActions:
+        - name: Copy Core AI model after code signing
+          settingsTarget: LessOfALoserCoreAI
+          script: |
+            MODEL_DIR="${SRCROOT}/Resources/CoreAI"
+            DESTINATION="${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}"
+            if [ -f "${MODEL_DIR}/metadata.json" ]; then
+              find "${MODEL_DIR}" -name '*.aimodel' -type d -exec cp -R {} "${DESTINATION}/" \;
+            fi
     test:
       targets:
         - WellnessCoreTests

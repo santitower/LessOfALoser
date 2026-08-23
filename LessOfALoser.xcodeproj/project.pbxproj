@@ -10,21 +10,31 @@
 		0D805D7F61A6686CD74C6C13 /* WellnessCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4E2D7D4FC4A7A80FE7DC701C /* WellnessCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1ED257F377524679C85991EB /* WellnessCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4E2D7D4FC4A7A80FE7DC701C /* WellnessCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		257456699E810F888ED5DC72 /* HealthKitClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B687AB2FAADECADF5746FE /* HealthKitClient.swift */; };
+		2D5D938D5E6FAF439100611E /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF124BE7B43F93F49F9886E6 /* DashboardView.swift */; };
 		3F6E08E634BB173358215FED /* SharedScreenTimeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96341AEF4B0B674825461ACB /* SharedScreenTimeStore.swift */; };
+		4189BA61D02F71807B26D93B /* HealthKitClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B687AB2FAADECADF5746FE /* HealthKitClient.swift */; };
 		51A286136C0D5E1417A4013F /* TrendEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F3EBC52343CCCFD59C38A7 /* TrendEngineTests.swift */; };
+		56FA5F975911474CBC4A6C32 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1F7A205B4CB268B4DEB6A414 /* Assets.xcassets */; };
+		58A353D0EEC07760C9AFDD4D /* WellnessViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F30CA44BB69A8B581CA484C /* WellnessViewModel.swift */; };
+		647D40F3EFA5E742912384E1 /* WellnessCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4E2D7D4FC4A7A80FE7DC701C /* WellnessCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6CE867F828E7D2600632BBE0 /* LocalWellnessCoach.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34056156A1848A176AA74C6E /* LocalWellnessCoach.swift */; };
 		729F1F1898EE70E8F1E389B2 /* WellnessCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E2D7D4FC4A7A80FE7DC701C /* WellnessCore.framework */; };
+		7BCBCB3216ACEA470EE54AB2 /* CoreAILM in Frameworks */ = {isa = PBXBuildFile; productRef = 6576D66ACF1A5D9745E62869 /* CoreAILM */; };
 		8E49C119EF96F0C276B97DEF /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF124BE7B43F93F49F9886E6 /* DashboardView.swift */; };
 		91D4DFFAC54DF79C3EB77A3C /* WellnessCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E2D7D4FC4A7A80FE7DC701C /* WellnessCore.framework */; };
 		9661529DF3876821C3FBE5B3 /* WellnessCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E2D7D4FC4A7A80FE7DC701C /* WellnessCore.framework */; };
 		9AFBBB79C871543BDF9A94BC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1F7A205B4CB268B4DEB6A414 /* Assets.xcassets */; };
 		AA746B03FEA93F1AF6DBDC07 /* TrendEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161CC6EE27FAAEE8D6AA569A /* TrendEngine.swift */; };
 		ABFEC5BF4920B454C005CF15 /* ScreenTimeReportExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD5180ADFEDD7A2BEFE938B0 /* ScreenTimeReportExtension.swift */; };
+		AF6FD9BCA22AF122C2F9944C /* WellnessCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E2D7D4FC4A7A80FE7DC701C /* WellnessCore.framework */; };
+		BA41BA89B4F3B44D0E4646D8 /* LocalWellnessCoach.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34056156A1848A176AA74C6E /* LocalWellnessCoach.swift */; };
 		C8C9527C066AC0D9E712CE29 /* DailyWellnessRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70E798602998E55645F8F46C /* DailyWellnessRecord.swift */; };
 		CB5C7CF41D754D4970D531BE /* PhoneLLMApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F6ED0DAACB376CC876AE3F /* PhoneLLMApp.swift */; };
 		D4DDDC5B356A8F96C4A2CAF8 /* ScreenTimeReport.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 0C95EC6752A031ED77332DC9 /* ScreenTimeReport.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		E5708DC7A005EF9AACC4ED37 /* WellnessViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F30CA44BB69A8B581CA484C /* WellnessViewModel.swift */; };
 		F87E55D6920737E537F94F70 /* SharedScreenTimeStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CEAA3F4E81D22D73F6B5861 /* SharedScreenTimeStoreTests.swift */; };
+		FE8DF25B78896B79B16EB765 /* PhoneLLMApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F6ED0DAACB376CC876AE3F /* PhoneLLMApp.swift */; };
+		FFA6B64176F8ABA4C3EB0DEF /* ScreenTimeReport.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 0C95EC6752A031ED77332DC9 /* ScreenTimeReport.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,6 +52,13 @@
 			remoteGlobalIDString = 4AD5EBD1EDEF3DBD4F379902;
 			remoteInfo = WellnessCore;
 		};
+		64D3A0249970CA5B9CCD9601 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 51CDA483CA154AA329A76BA4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C50FD89DEF4C40D4E5CFC96D;
+			remoteInfo = ScreenTimeReport;
+		};
 		7BFB6DA84EC98959988F59CD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 51CDA483CA154AA329A76BA4 /* Project object */;
@@ -56,9 +73,27 @@
 			remoteGlobalIDString = C50FD89DEF4C40D4E5CFC96D;
 			remoteInfo = ScreenTimeReport;
 		};
+		A8D71165C5A61239608FD993 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 51CDA483CA154AA329A76BA4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4AD5EBD1EDEF3DBD4F379902;
+			remoteInfo = WellnessCore;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		550ECB6B4CD3679A54BD413E /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				647D40F3EFA5E742912384E1 /* WellnessCore.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8709120C12AFF86CB330CBD7 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -92,6 +127,17 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		DFBBB621F16FF4F6322EEE8C /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				FFA6B64176F8ABA4C3EB0DEF /* ScreenTimeReport.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -105,9 +151,9 @@
 		4E2D7D4FC4A7A80FE7DC701C /* WellnessCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WellnessCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6F30CA44BB69A8B581CA484C /* WellnessViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WellnessViewModel.swift; sourceTree = "<group>"; };
 		70E798602998E55645F8F46C /* DailyWellnessRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyWellnessRecord.swift; sourceTree = "<group>"; };
+		9168697F7F8D6741B40AD131 /* LessOfALoserCoreAI.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = LessOfALoserCoreAI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		93F6ED0DAACB376CC876AE3F /* PhoneLLMApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneLLMApp.swift; sourceTree = "<group>"; };
 		96341AEF4B0B674825461ACB /* SharedScreenTimeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedScreenTimeStore.swift; sourceTree = "<group>"; };
-		A070ADF2316C2B64480B3BAE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		BD5180ADFEDD7A2BEFE938B0 /* ScreenTimeReportExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenTimeReportExtension.swift; sourceTree = "<group>"; };
 		C6B687AB2FAADECADF5746FE /* HealthKitClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitClient.swift; sourceTree = "<group>"; };
 		D541C4227BF90D1A6F690D60 /* PhoneLLM.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = PhoneLLM.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -118,6 +164,15 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		0D8F3BE207833FD920011764 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AF6FD9BCA22AF122C2F9944C /* WellnessCore.framework in Frameworks */,
+				7BCBCB3216ACEA470EE54AB2 /* CoreAILM in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3DC43CF9ACF2811229FCE858 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -148,6 +203,7 @@
 		45FB66B202DB9FC31B6713F4 /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				9168697F7F8D6741B40AD131 /* LessOfALoserCoreAI.app */,
 				D541C4227BF90D1A6F690D60 /* PhoneLLM.app */,
 				0C95EC6752A031ED77332DC9 /* ScreenTimeReport.appex */,
 				4E2D7D4FC4A7A80FE7DC701C /* WellnessCore.framework */,
@@ -189,7 +245,6 @@
 				1F7A205B4CB268B4DEB6A414 /* Assets.xcassets */,
 				FF124BE7B43F93F49F9886E6 /* DashboardView.swift */,
 				C6B687AB2FAADECADF5746FE /* HealthKitClient.swift */,
-				A070ADF2316C2B64480B3BAE /* Info.plist */,
 				34056156A1848A176AA74C6E /* LocalWellnessCoach.swift */,
 				2A78AE5F6BE1CB050A18BD63 /* PhoneLLM.entitlements */,
 				93F6ED0DAACB376CC876AE3F /* PhoneLLMApp.swift */,
@@ -230,6 +285,31 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		3E89A223ACA761D942A1D8D7 /* LessOfALoserCoreAI */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C820EB6E3535CCB94428CD9C /* Build configuration list for PBXNativeTarget "LessOfALoserCoreAI" */;
+			buildPhases = (
+				1DB4EA2B4ECEE930F120F6F2 /* Sources */,
+				97CCFBD9EEEC1C79A3902D7D /* Resources */,
+				0D8F3BE207833FD920011764 /* Frameworks */,
+				DFBBB621F16FF4F6322EEE8C /* Embed Foundation Extensions */,
+				550ECB6B4CD3679A54BD413E /* Embed Frameworks */,
+				7DB76781B50140117FD9DDE2 /* Copy Core AI support resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AE39AF7594ED054030827E92 /* PBXTargetDependency */,
+				2B6B2BB797AB07FBA83EC01F /* PBXTargetDependency */,
+			);
+			name = LessOfALoserCoreAI;
+			packageProductDependencies = (
+				6576D66ACF1A5D9745E62869 /* CoreAILM */,
+			);
+			productName = LessOfALoserCoreAI;
+			productReference = 9168697F7F8D6741B40AD131 /* LessOfALoserCoreAI.app */;
+			productType = "com.apple.product-type.application";
+		};
 		4AD5EBD1EDEF3DBD4F379902 /* WellnessCore */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C8F6F96F23C4CD8D9F09F7FA /* Build configuration list for PBXNativeTarget "WellnessCore" */;
@@ -318,6 +398,9 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
+					3E89A223ACA761D942A1D8D7 = {
+						ProvisioningStyle = Automatic;
+					};
 					4AD5EBD1EDEF3DBD4F379902 = {
 						ProvisioningStyle = Automatic;
 					};
@@ -341,6 +424,9 @@
 			);
 			mainGroup = C03B65FB395C85812D322295;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				E58EE72B3CA1FEE3AC51B63B /* XCRemoteSwiftPackageReference "coreai-models" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 45FB66B202DB9FC31B6713F4 /* Products */;
 			projectDirPath = "";
@@ -348,6 +434,7 @@
 			targets = (
 				4AD5EBD1EDEF3DBD4F379902 /* WellnessCore */,
 				F1651655AA8AB7EB522CD675 /* PhoneLLM */,
+				3E89A223ACA761D942A1D8D7 /* LessOfALoserCoreAI */,
 				C50FD89DEF4C40D4E5CFC96D /* ScreenTimeReport */,
 				F9E70223D9BFE50DEF049D04 /* WellnessCoreTests */,
 			);
@@ -363,7 +450,37 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		97CCFBD9EEEC1C79A3902D7D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				56FA5F975911474CBC4A6C32 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		7DB76781B50140117FD9DDE2 /* Copy Core AI support resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Core AI support resources";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "MODEL_DIR=\"${SRCROOT}/Resources/CoreAI\"\nDESTINATION=\"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}\"\nif [ -f \"${MODEL_DIR}/metadata.json\" ]; then\n  rsync -a \\\n    --exclude '*.aimodel' \\\n    --exclude '.gitignore' \\\n    --exclude 'README.md' \\\n    \"${MODEL_DIR}/\" \"${DESTINATION}/\"\nelse\n  echo \"warning: Core AI model not installed; the app will use its fallback model.\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		1169D03E82604AADF5175B32 /* Sources */ = {
@@ -372,6 +489,18 @@
 			files = (
 				F87E55D6920737E537F94F70 /* SharedScreenTimeStoreTests.swift in Sources */,
 				51A286136C0D5E1417A4013F /* TrendEngineTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1DB4EA2B4ECEE930F120F6F2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D5D938D5E6FAF439100611E /* DashboardView.swift in Sources */,
+				4189BA61D02F71807B26D93B /* HealthKitClient.swift in Sources */,
+				BA41BA89B4F3B44D0E4646D8 /* LocalWellnessCoach.swift in Sources */,
+				FE8DF25B78896B79B16EB765 /* PhoneLLMApp.swift in Sources */,
+				58A353D0EEC07760C9AFDD4D /* WellnessViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -413,6 +542,11 @@
 			target = 4AD5EBD1EDEF3DBD4F379902 /* WellnessCore */;
 			targetProxy = 7BFB6DA84EC98959988F59CD /* PBXContainerItemProxy */;
 		};
+		2B6B2BB797AB07FBA83EC01F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C50FD89DEF4C40D4E5CFC96D /* ScreenTimeReport */;
+			targetProxy = 64D3A0249970CA5B9CCD9601 /* PBXContainerItemProxy */;
+		};
 		8CA4855643D270EA80873FBC /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C50FD89DEF4C40D4E5CFC96D /* ScreenTimeReport */;
@@ -422,6 +556,11 @@
 			isa = PBXTargetDependency;
 			target = 4AD5EBD1EDEF3DBD4F379902 /* WellnessCore */;
 			targetProxy = 5900566E6E050E2DD69EB8EC /* PBXContainerItemProxy */;
+		};
+		AE39AF7594ED054030827E92 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4AD5EBD1EDEF3DBD4F379902 /* WellnessCore */;
+			targetProxy = A8D71165C5A61239608FD993 /* PBXContainerItemProxy */;
 		};
 		C8C72C577281A688025EEEDC /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -442,6 +581,48 @@
 					"@loader_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.santitower.WellnessCoreTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		3C88EDBF303803D47164FD2B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = PhoneLLM/PhoneLLM.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				INFOPLIST_FILE = "PhoneLLM/CoreAI-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.santitower.LessOfALoser;
+				PRODUCT_NAME = LessOfALoserCoreAI;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		3D796E55497A3F9F6B8BFD30 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = PhoneLLM/PhoneLLM.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				INFOPLIST_FILE = "PhoneLLM/CoreAI-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.santitower.LessOfALoser;
+				PRODUCT_NAME = LessOfALoserCoreAI;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -736,6 +917,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
+		C820EB6E3535CCB94428CD9C /* Build configuration list for PBXNativeTarget "LessOfALoserCoreAI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3D796E55497A3F9F6B8BFD30 /* Debug */,
+				3C88EDBF303803D47164FD2B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		C8F6F96F23C4CD8D9F09F7FA /* Build configuration list for PBXNativeTarget "WellnessCore" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -755,6 +945,25 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		E58EE72B3CA1FEE3AC51B63B /* XCRemoteSwiftPackageReference "coreai-models" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/coreai-models.git";
+			requirement = {
+				kind = exactVersion;
+				version = 0.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		6576D66ACF1A5D9745E62869 /* CoreAILM */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E58EE72B3CA1FEE3AC51B63B /* XCRemoteSwiftPackageReference "coreai-models" */;
+			productName = CoreAILM;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 51CDA483CA154AA329A76BA4 /* Project object */;
 }
