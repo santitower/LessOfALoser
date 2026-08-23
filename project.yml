@@ -12,7 +12,7 @@ settings:
 packages:
   coreai-models:
     url: https://github.com/apple/coreai-models.git
-    exactVersion: 0.1.0
+    exactVersion: 0.2.0
 targets:
   WellnessCore:
     type: framework
