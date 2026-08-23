@@ -6,9 +6,21 @@ repository_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 project_path="$repository_root/LessOfALoser.xcodeproj"
 xcode_download_url="https://developer.apple.com/download/all/?q=Xcode%2026.3"
 
-if ! xcode_path=$(xcode-select -p 2>/dev/null) ||
-  [ ! -x "$xcode_path/usr/bin/xcodebuild" ] ||
-  [ "${xcode_path#*/Xcode.app/}" = "$xcode_path" ]; then
+if xcode_path=$(xcode-select -p 2>/dev/null); then
+  case "$xcode_path" in
+    *.app/Contents/Developer)
+      xcode_app_path=${xcode_path%/Contents/Developer}
+      ;;
+    *)
+      xcode_app_path=
+      ;;
+  esac
+else
+  xcode_path=
+  xcode_app_path=
+fi
+
+if [ -z "$xcode_app_path" ] || [ ! -x "$xcode_path/usr/bin/xcodebuild" ]; then
   cat >&2 <<EOF
 LessOfALoser needs the full Xcode app. Xcode Command Line Tools and XcodeGen
 cannot open or run an iPhone project by themselves.
@@ -37,7 +49,7 @@ fi
 
 cd "$repository_root"
 xcodegen generate
-open -a Xcode "$project_path"
+open -a "$xcode_app_path" "$project_path"
 
 cat <<'EOF'
 Opened LessOfALoser in Xcode.

@@ -18,14 +18,14 @@ No personal health data belongs in this repository, and the starter contains no 
 - Daily step totals using `HKStatisticsCollectionQuery`
 - Individual Screen Time authorization with Family Controls
 - Privacy-preserving `DeviceActivityReportExtension`
-- Coarse daily Screen Time sharing through a local App Group container
+- Up to seven coarse daily Screen Time totals in a local App Group container
 - 28-day baseline comparisons in the platform-independent `WellnessCore` module
 - One reviewed insight context shared by Today, League, Ask, and export
 - Focusable daily path with explicit achieved, open, and unavailable goal states
 - On-device Foundation Models coaching with a deterministic fallback
 - Optional iOS 27 Core AI target for an exported Qwen 2.5 1.5B model
 - Optional Computer Coach using Tailscale HTTPS and Ollama on a personal computer
-- In-app Quick Connect plus a one-tap `lessofaloser://connect` link
+- In-app Quick Connect plus a `lessofaloser://connect` link that prefills the computer address
 - Aggregate-only gateway validation, Tailscale identity checks, and safe automatic fallback
 - Dedicated Personal AI chat tab backed by a replaceable on-device model runtime
 - In-memory conversations grounded in aggregate trends, with a verified no-model fallback
@@ -114,7 +114,7 @@ swift test
 
 ## Privacy boundary
 
-Screen Time is not a HealthKit database. Apple provides activity results inside a privacy-preserving report extension. This prototype stores only the aggregate number of daily activity minutes in a shared local App Group container. It does not persist app names, web domains, opaque application tokens, or raw activity events.
+Screen Time is not a HealthKit database. Apple provides activity results inside a privacy-preserving report extension. This prototype keeps at most seven aggregate daily activity-minute snapshots in a shared local App Group container so it can calculate the current week's score. It does not persist app names, web domains, opaque application tokens, or raw activity events, and it cannot backfill a day when the daily report was not produced.
 
 Before distributing this pattern, confirm it against the current Apple Developer Program terms and App Review requirements. A production version should include an accessible privacy policy, deletion controls, safety evaluations, and a formal review of its wellness claims.
 
@@ -130,7 +130,7 @@ LessOfALoser is general wellness software. It must not:
 
 Every model receives aggregated JSON facts rather than raw HealthKit samples. If a custom model is missing or refuses a request, the app tries the next local backend before displaying the deterministic fallback.
 
-When Computer Coach is enabled, the same aggregate summary leaves the iPhone only through the user's private Tailscale network. The gateway does not accept raw HealthKit samples, Screen Time app identities, arbitrary prompts, or model tools.
+When Computer Coach is enabled, the same aggregate summary leaves the iPhone only through the user's private Tailscale network. The gateway recomputes canonical observations from the numeric trends and does not accept raw HealthKit samples, Screen Time app identities, arbitrary prompts, or model tools.
 
 ## Project layout
 

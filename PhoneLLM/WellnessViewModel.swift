@@ -71,7 +71,6 @@ final class WellnessViewModel {
     var insightContext: WellnessInsightContext {
         insightContext(for: .now)
     }
-
     var computerCoachButtonTitle: String {
         if isConnectionLinkPending { return "Connect & Use" }
         return computerCoachEnabled ? "Test Connection" : "Quick Connect"
@@ -132,6 +131,7 @@ final class WellnessViewModel {
             computerCoachURL = configuration.baseURL.absoluteString
             computerCoachStatus = "Connected · \(health.model)"
             computerCoachEnabled = true
+            isConnectionLinkPending = false
             errorMessage = nil
             await refresh()
         } catch {

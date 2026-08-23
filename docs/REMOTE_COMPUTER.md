@@ -9,7 +9,7 @@ iPhone app
   -> Ollama on the selected computer
 ```
 
-The app sends one aggregate `WellnessTrendSummary`: the date, current and baseline sleep/step/Screen Time totals, percentage changes, short observations, and data coverage. The gateway rejects raw samples, app names, domains, arbitrary prompts, tools, and unknown fields.
+The app sends one aggregate `WellnessTrendSummary`: the date, current and baseline sleep/step/Screen Time totals, percentage changes, canonical observations, and data coverage. The gateway recomputes the observations from the numeric trends and rejects mismatches, raw samples, app names, domains, arbitrary prompts, tools, and unknown fields.
 
 ## Current tested setup
 
@@ -53,7 +53,7 @@ To run it only for the current terminal instead:
 tailscale serve --bg --yes 8787
 ```
 
-The first command prints both the HTTPS address and a `lessofaloser://connect?...` link. Open that connection link on an installed build, or paste the HTTPS address into **Computer Coach** and tap **Quick Connect**.
+The first command prints both the HTTPS address and a `lessofaloser://connect?...` link. Open that connection link on an installed build, review the prefilled address, and tap **Connect & Use**. The app does not contact or save a server supplied by a link until that explicit confirmation. You can instead paste the HTTPS address into **Computer Coach** and tap **Quick Connect**.
 
 Verify the authenticated path from another tailnet device:
 
@@ -93,7 +93,7 @@ iCloud is useful for syncing records, but it is not a request/response transport
 - Tailscale identity or an explicit development token is required for model requests.
 - The gateway logs only timestamp, client address, route, and status—not request bodies.
 - The model receives a fixed wellness-only prompt and cannot invoke tools.
-- Responses must match a small JSON schema and pass a treatment/medication language check.
-- The model selects an action category; the gateway converts it to vetted wording and rejects categories whose metric is missing.
+- The model can return only an action category; it cannot supply user-visible prose.
+- The gateway converts the category to a vetted headline and action, and rejects categories whose metric is missing or does not match the first canonical observation.
 - The gateway supplies the fixed medical disclaimer rather than trusting model output.
 - If the computer is offline, unauthorized, too slow, or returns invalid output, the app falls back to its on-device model and then deterministic rules.

@@ -49,6 +49,8 @@ public struct SharedScreenTimeStore: Sendable {
         let encoder = JSONEncoder()
         defaults.set(try encoder.encode(snapshots), forKey: Self.snapshotHistoryKey)
 
+        // Keep writing the original key so an older app build can still read
+        // the newest snapshot after an upgrade and downgrade.
         if let latest = snapshots.last {
             defaults.set(try encoder.encode(latest), forKey: Self.snapshotKey)
         }

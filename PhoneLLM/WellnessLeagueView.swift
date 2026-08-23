@@ -123,8 +123,12 @@ struct WellnessLeagueView: View {
             }
             .task {
                 while !Task.isCancelled {
-                    try? await Task.sleep(for: .seconds(60))
                     scoringDate = .now
+                    do {
+                        try await Task.sleep(for: .seconds(60))
+                    } catch {
+                        return
+                    }
                 }
             }
         }
@@ -185,7 +189,7 @@ struct WellnessLeagueView: View {
                     .foregroundStyle(.yellow)
                 Text("Momentum League")
                     .font(.largeTitle.bold())
-                Text("Build the week. Talk a little trash. Keep the exact numbers private.")
+                Text("Build the week. Keep the exact numbers private.")
                     .font(.subheadline)
                     .foregroundStyle(.white.opacity(0.8))
             }
@@ -195,7 +199,10 @@ struct WellnessLeagueView: View {
                 Divider().overlay(.white.opacity(0.25)).frame(height: 34)
                 heroStat(value: "\(displayedUserPoints)", label: "POINTS")
                 Divider().overlay(.white.opacity(0.25)).frame(height: 34)
-                heroStat(value: "+2", label: "THIS WEEK")
+                heroStat(
+                    value: hasLiveLeague ? "\(weeklyScore.activeDays)" : "+2",
+                    label: hasLiveLeague ? "ACTIVE DAYS" : "PREVIEW MOVE"
+                )
             }
         }
         .foregroundStyle(.white)
@@ -353,7 +360,7 @@ struct WellnessLeagueView: View {
                     .font(.headline)
                     .foregroundStyle(.pink)
                 Spacer()
-                Text("2 DAYS LEFT")
+                Text("\(timeRemaining.uppercased()) LEFT")
                     .font(.caption2.weight(.black))
                     .foregroundStyle(.pink)
             }

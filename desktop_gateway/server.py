@@ -27,11 +27,17 @@ FIXED_CAUTION = "General wellness information only; not medical advice."
 SYSTEM_PROMPT = """
 You select a short daily wellness brief using only the supplied aggregate JSON facts.
 Never diagnose, predict disease, claim causation, recommend medication or supplements,
-or advise changing treatment. Missing values are unknown, not negative. Write a neutral
-headline without adding measurements or benefits. Select exactly one actionCategory that
-is supported by a present metric and matches the first supplied observation. Do not promise
-that an action will improve health or another metric. Do not mention data that is absent.
+or advise changing treatment. Missing values are unknown, not negative. Select exactly one
+actionCategory that is supported by a present metric and matches the first supplied
+observation. Return no other fields.
 """.strip()
+
+HEADLINE_TEXT = {
+    "sleepRoutine": "A steadier sleep routine",
+    "shortWalk": "A little movement today",
+    "screenBreak": "A screen-free wind-down",
+    "maintainRoutine": "Keep building on your routine",
+}
 
 ACTION_TEXT = {
     "sleepRoutine": "Consider protecting a consistent bedtime tonight.",
@@ -40,15 +46,7 @@ ACTION_TEXT = {
     "maintainRoutine": "Keep following the routine that feels sustainable for you.",
 }
 
-BRIEF_SCHEMA = {
-    "type": "object",
-    "properties": {
-        "headline": {"type": "string", "maxLength": 120},
-        "actionCategory": {"type": "string", "enum": list(ACTION_TEXT)},
-    },
-    "required": ["headline", "actionCategory"],
-    "additionalProperties": False,
-}
+MODEL_RESPONSE_KEYS = frozenset({"actionCategory"})
 
 SUMMARY_KEYS = {
     "date",
@@ -60,17 +58,6 @@ SUMMARY_KEYS = {
     "baselineDayCount",
 }
 TREND_KEYS = {"current", "baselineAverage", "percentChange"}
-UNSAFE_ACTION_TERMS = {
-    "diagnose",
-    "diagnosis",
-    "dosage",
-    "dose ",
-    "medication",
-    "medicine",
-    "prescription",
-    "supplement",
-    "treatment",
-}
 
 
 class GatewayError(Exception):
@@ -148,6 +135,66 @@ def _validate_trend(value: Any, name: str, maximum: float) -> None:
         value.setdefault(key, None)
 
 
+def _swift_rounded(value: float) -> str:
+    """Match Swift's default rounding for the non-negative values rendered here."""
+    return str(math.floor(value + 0.5))
+
+
+def canonical_observations(summary: Mapping[str, Any]) -> list[str]:
+    observations: list[str] = []
+    for key, name, unit in (
+        ("sleep", "Sleep", "minutes"),
+        ("steps", "Steps", "steps"),
+        ("screenTime", "Screen time", "minutes"),
+    ):
+        trend = summary[key]
+        current = trend["current"]
+        baseline = trend["baselineAverage"]
+        change = trend["percentChange"]
+        if current is None or baseline is None or change is None:
+            continue
+        direction = "above" if change >= 0 else "below"
+        observations.append(
+            f"{name} was {_swift_rounded(float(current))} {unit}, "
+            f"{_swift_rounded(abs(float(change)))}% {direction} the recent average of "
+            f"{_swift_rounded(float(baseline))} {unit}."
+        )
+    return observations or ["Not enough comparable data is available yet."]
+
+
+def primary_observation_metric(summary: Mapping[str, Any]) -> str | None:
+    observation = summary["observations"][0] if summary["observations"] else ""
+    return next(
+        (
+            metric
+            for keyword, metric in {
+                "sleep": "sleep",
+                "step": "steps",
+                "screen": "screenTime",
+            }.items()
+            if keyword in observation.lower()
+        ),
+        None,
+    )
+
+
+def brief_schema(summary: Mapping[str, Any]) -> dict[str, Any]:
+    category = {
+        "sleep": "sleepRoutine",
+        "steps": "shortWalk",
+        "screenTime": "screenBreak",
+    }.get(primary_observation_metric(summary))
+    allowed_categories = [category, "maintainRoutine"] if category else ["maintainRoutine"]
+    return {
+        "type": "object",
+        "properties": {
+            "actionCategory": {"type": "string", "enum": allowed_categories},
+        },
+        "required": ["actionCategory"],
+        "additionalProperties": False,
+    }
+
+
 def validate_summary(summary: Any) -> dict[str, Any]:
     if not isinstance(summary, dict) or set(summary) != SUMMARY_KEYS:
         raise GatewayError(
@@ -172,13 +219,13 @@ def validate_summary(summary: Any) -> dict[str, Any]:
     observations = summary["observations"]
     if (
         not isinstance(observations, list)
-        or len(observations) > 6
-        or any(not isinstance(item, str) or len(item) > 320 for item in observations)
+        or any(not isinstance(item, str) for item in observations)
+        or observations != canonical_observations(summary)
     ):
         raise GatewayError(
             HTTPStatus.BAD_REQUEST,
             "invalid_summary",
-            "observations must be a short string array",
+            "observations must match the canonical aggregate trends",
         )
 
     _number(summary["dataCoverage"], "dataCoverage", 0, 1)
@@ -197,42 +244,26 @@ def validate_summary(summary: Any) -> dict[str, Any]:
 
 
 def validate_brief(value: Any, summary: dict[str, Any]) -> dict[str, str]:
-    if not isinstance(value, dict) or set(value) != set(BRIEF_SCHEMA["required"]):
+    if not isinstance(value, dict) or set(value) != MODEL_RESPONSE_KEYS:
         raise GatewayError(
             HTTPStatus.BAD_GATEWAY,
             "invalid_model_response",
             "model returned an unexpected response shape",
         )
 
-    limits = {"headline": 120}
-    brief: dict[str, str] = {}
-    for key, limit in limits.items():
-        text = value.get(key)
-        if not isinstance(text, str) or not text.strip() or len(text) > limit:
-            raise GatewayError(
-                HTTPStatus.BAD_GATEWAY,
-                "invalid_model_response",
-                f"model returned an invalid {key}",
-            )
-        brief[key] = text.strip()
-
-    combined_text = " ".join(brief.values()).lower()
-    if any(term in combined_text for term in UNSAFE_ACTION_TERMS):
+    category = value.get("actionCategory")
+    if not isinstance(category, str) or category not in ACTION_TEXT:
         raise GatewayError(
             HTTPStatus.UNPROCESSABLE_ENTITY,
-            "unsafe_model_response",
-            "model response did not pass the wellness safety boundary",
+            "unsupported_action",
+            "model selected an unsupported action",
         )
-
-    category = value.get("actionCategory")
     required_metric = {
         "sleepRoutine": "sleep",
         "shortWalk": "steps",
         "screenBreak": "screenTime",
     }.get(category)
-    if category not in ACTION_TEXT or (
-        required_metric and summary[required_metric]["current"] is None
-    ):
+    if required_metric and summary[required_metric]["current"] is None:
         raise GatewayError(
             HTTPStatus.UNPROCESSABLE_ENTITY,
             "unsupported_action",
@@ -240,18 +271,7 @@ def validate_brief(value: Any, summary: dict[str, Any]) -> dict[str, str]:
         )
 
     supplied_observation = summary["observations"][0] if summary["observations"] else ""
-    observation_metric = next(
-        (
-            metric
-            for keyword, metric in {
-                "sleep": "sleep",
-                "step": "steps",
-                "screen": "screenTime",
-            }.items()
-            if keyword in supplied_observation.lower()
-        ),
-        None,
-    )
+    observation_metric = primary_observation_metric(summary)
     if required_metric and observation_metric and required_metric != observation_metric:
         raise GatewayError(
             HTTPStatus.UNPROCESSABLE_ENTITY,
@@ -259,12 +279,12 @@ def validate_brief(value: Any, summary: dict[str, Any]) -> dict[str, str]:
             "model selected an action that does not match the verified observation",
         )
 
-    brief["observation"] = (
-        supplied_observation or "Available aggregate wellness trends were reviewed."
-    )
-    brief["suggestedAction"] = ACTION_TEXT[category]
-    brief["caution"] = FIXED_CAUTION
-    return brief
+    return {
+        "headline": HEADLINE_TEXT[category],
+        "observation": supplied_observation,
+        "suggestedAction": ACTION_TEXT[category],
+        "caution": FIXED_CAUTION,
+    }
 
 
 def is_authorized(headers: Mapping[str, str], config: GatewayConfig) -> bool:
@@ -296,7 +316,7 @@ def build_ollama_payload(summary: dict[str, Any], model: str) -> dict[str, Any]:
         ],
         "stream": False,
         "think": False,
-        "format": BRIEF_SCHEMA,
+        "format": brief_schema(summary),
         "keep_alive": "10m",
         "options": {"temperature": 0, "num_ctx": 4096},
     }
@@ -406,7 +426,7 @@ class CoachRequestHandler(BaseHTTPRequestHandler):
 
             try:
                 payload = json.loads(self.rfile.read(length))
-            except json.JSONDecodeError as error:
+            except (UnicodeDecodeError, json.JSONDecodeError) as error:
                 raise GatewayError(
                     HTTPStatus.BAD_REQUEST, "invalid_json", "request must be valid JSON"
                 ) from error
