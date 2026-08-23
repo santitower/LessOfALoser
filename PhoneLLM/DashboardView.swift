@@ -119,7 +119,7 @@ struct DashboardView: View {
                     if model.isCheckingComputerCoach {
                         ProgressView()
                     } else {
-                        Text(model.computerCoachEnabled ? "Test Connection" : "Quick Connect")
+                        Text(model.computerCoachButtonTitle)
                     }
                 }
                 .buttonStyle(.borderedProminent)

@@ -23,7 +23,7 @@ No personal health data belongs in this repository, and the starter contains no 
 - On-device Foundation Models coaching with a deterministic fallback
 - Optional iOS 27 Core AI target for an exported Qwen 2.5 1.5B model
 - Optional Computer Coach using Tailscale HTTPS and Ollama on a personal computer
-- In-app Quick Connect plus a one-tap `lessofaloser://connect` link
+- In-app Quick Connect plus a `lessofaloser://connect` link that prefills the computer address
 - Aggregate-only gateway validation, Tailscale identity checks, and safe automatic fallback
 - Wellness League preview with weekly consistency points, rank movement, podiums, streaks, duels, and preset friend reactions
 - Synthetic social profiles and a local-score toggle while the consent/account backend remains intentionally unimplemented
@@ -118,7 +118,7 @@ LessOfALoser is general wellness software. It must not:
 
 Every model receives aggregated JSON facts rather than raw HealthKit samples. If a custom model is missing or refuses a request, the app tries the next local backend before displaying the deterministic fallback.
 
-When Computer Coach is enabled, the same aggregate summary leaves the iPhone only through the user's private Tailscale network. The gateway does not accept raw HealthKit samples, Screen Time app identities, arbitrary prompts, or model tools.
+When Computer Coach is enabled, the same aggregate summary leaves the iPhone only through the user's private Tailscale network. The gateway recomputes canonical observations from the numeric trends and does not accept raw HealthKit samples, Screen Time app identities, arbitrary prompts, or model tools.
 
 ## Project layout
 
