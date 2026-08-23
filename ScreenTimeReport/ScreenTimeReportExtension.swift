@@ -10,7 +10,9 @@ extension DeviceActivityReport.Context {
 @main
 struct ScreenTimeReportExtension: DeviceActivityReportExtension {
     var body: some DeviceActivityReportScene {
-        DailyScreenTimeReport()
+        DailyScreenTimeReport { configuration in
+            DailyScreenTimeView(configuration: configuration)
+        }
     }
 }
 
