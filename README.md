@@ -18,26 +18,32 @@ No personal health data belongs in this repository, and the starter contains no 
 - Daily step totals using `HKStatisticsCollectionQuery`
 - Individual Screen Time authorization with Family Controls
 - Privacy-preserving `DeviceActivityReportExtension`
-- Coarse daily Screen Time sharing through a local App Group container
+- Up to seven coarse daily Screen Time totals in a local App Group container
 - 28-day baseline comparisons in the platform-independent `WellnessCore` module
 - On-device Foundation Models coaching with a deterministic fallback
 - Optional iOS 27 Core AI target for an exported Qwen 2.5 1.5B model
 - Optional Computer Coach using Tailscale HTTPS and Ollama on a personal computer
 - In-app Quick Connect plus a `lessofaloser://connect` link that prefills the computer address
 - Aggregate-only gateway validation, Tailscale identity checks, and safe automatic fallback
+- Wellness League preview with weekly consistency points, rank movement, podiums, streaks, duels, and preset friend reactions
+- Synthetic social profiles and a local-score toggle while the consent/account backend remains intentionally unimplemented
 - Swift unit tests and a GitHub Actions workflow
 
 ## Requirements
 
-- Xcode 26 or newer
+- The full Xcode 26 app, not only Xcode Command Line Tools or XcodeGen
 - An iPhone running iOS 26 or newer
 - An Apple Developer team for device signing
 - An Apple Intelligence-compatible device with Apple Intelligence enabled for generated coaching
 - Apple approval for the Family Controls distribution entitlement before App Store or TestFlight distribution
 
+Check [Apple's Xcode compatibility table](https://developer.apple.com/xcode/system-requirements/) before downloading. On macOS Sequoia 15.6 or newer, use Xcode 26.3; newer Xcode releases may require macOS Tahoe.
+
 The optional custom-model build requires Xcode 27, iOS 27, and a separately exported Core AI model bundle. See [the Core AI integration guide](docs/CORE_AI.md).
 
 An older iPhone can instead use a computer running Tailscale, Python 3, and Ollama. See [the Private Computer Coach guide](docs/REMOTE_COMPUTER.md).
+
+The social competition tab is a local, synthetic-data UI prototype. See [the Wellness Leagues design and backend boundary](docs/SOCIAL_LEAGUES.md).
 
 HealthKit and Device Activity should be tested on a physical iPhone. The deterministic `WellnessCore` package can be tested on macOS without Xcode.
 
@@ -45,20 +51,37 @@ HealthKit and Device Activity should be tested on a physical iPhone. The determi
 
 The repository uses [XcodeGen](https://github.com/yonaskolb/XcodeGen) so the project file is reproducible.
 
+First verify that the full Xcode app is installed:
+
+```sh
+xcodebuild -version
+```
+
+If that command says the active developer directory is Command Line Tools, install [Xcode 26.3 from Apple Developer Downloads](https://developer.apple.com/download/all/?q=Xcode%2026.3), move `Xcode.app` to `/Applications`, open it once, and select it:
+
+```sh
+sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+```
+
+Then run the checked setup helper from the repository:
+
 ```sh
 brew install xcodegen
-xcodegen generate
-open LessOfALoser.xcodeproj
+./scripts/open-project.sh
 ```
+
+The helper generates the project and explicitly opens it with Xcode. If Xcode is missing, it stops with a useful installation message instead of opening the `.xcodeproj` package as a Finder folder.
 
 In Xcode:
 
-1. Select your development team for the `PhoneLLM` and `ScreenTimeReport` targets.
-2. Replace the `com.santitower` bundle prefix if you do not control it.
-3. Register the `group.com.santitower.LessOfALoser` App Group for both targets.
-4. Enable HealthKit on the app target.
-5. Enable Family Controls on the app and report extension targets.
-6. Build to a physical iPhone and grant Health and Screen Time access.
+1. Choose the `LessOfALoser` scheme, not the experimental `LessOfALoser-CoreAI` scheme.
+2. For a quick UI demo, select an installed iOS 26 simulator and press Run.
+3. For real Health and Screen Time data, select your development team for the `PhoneLLM` and `ScreenTimeReport` targets.
+4. Replace the `com.santitower` bundle prefix if you do not control it.
+5. Register the `group.com.santitower.LessOfALoser` App Group for both targets.
+6. Enable HealthKit on the app target.
+7. Enable Family Controls on the app and report extension targets.
+8. Build to a physical iPhone and grant Health and Screen Time access.
 
 For distribution, request the Family Controls managed capability for both the app and report extension identifiers in the Apple Developer portal.
 
@@ -79,7 +102,7 @@ swift test
 
 ## Privacy boundary
 
-Screen Time is not a HealthKit database. Apple provides activity results inside a privacy-preserving report extension. This prototype stores only the aggregate number of daily activity minutes in a shared local App Group container. It does not persist app names, web domains, opaque application tokens, or raw activity events.
+Screen Time is not a HealthKit database. Apple provides activity results inside a privacy-preserving report extension. This prototype keeps at most seven aggregate daily activity-minute snapshots in a shared local App Group container so it can calculate the current week's score. It does not persist app names, web domains, opaque application tokens, or raw activity events, and it cannot backfill a day when the daily report was not produced.
 
 Before distributing this pattern, confirm it against the current Apple Developer Program terms and App Review requirements. A production version should include an accessible privacy policy, deletion controls, safety evaluations, and a formal review of its wellness claims.
 
@@ -108,6 +131,7 @@ Sources/WellnessCore/     Shared models, trend engine, local snapshot store
 Tests/WellnessCoreTests/  Platform-independent tests
 docs/CORE_AI.md            Qwen/Core AI export and build instructions
 docs/REMOTE_COMPUTER.md    Tailscale Computer Coach setup and security model
+docs/SOCIAL_LEAGUES.md     Competition score, consent, and backend boundary
 project.yml               XcodeGen project definition
 ```
 

@@ -6,8 +6,18 @@ struct PhoneLLMApp: App {
 
     var body: some Scene {
         WindowGroup {
-            DashboardView(model: model)
+            TabView {
+                DashboardView(model: model)
+                    .tabItem {
+                        Label("Today", systemImage: "heart.text.square.fill")
+                    }
+
+                WellnessLeagueView(model: model)
+                    .tabItem {
+                        Label("League", systemImage: "trophy.fill")
+                    }
+            }
+            .tint(.purple)
         }
     }
 }
-
