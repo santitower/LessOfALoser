@@ -21,6 +21,7 @@ final class WellnessViewModel {
     var computerCoachStatus = "Not connected"
     var isCheckingComputerCoach = false
     var computerCoachEnabled = false
+    var isConnectionLinkPending = false
 
     var today: DailyWellnessRecord? {
         records.sorted { $0.date < $1.date }.last
@@ -28,6 +29,11 @@ final class WellnessViewModel {
 
     var trendSummary: WellnessTrendSummary? {
         TrendEngine.summarize(records: records)
+    }
+
+    var computerCoachButtonTitle: String {
+        if isConnectionLinkPending { return "Connect & Use" }
+        return computerCoachEnabled ? "Test Connection" : "Quick Connect"
     }
 
     init() {
@@ -51,6 +57,7 @@ final class WellnessViewModel {
             computerCoachURL = configuration.baseURL.absoluteString
             computerCoachStatus = "Connected · \(health.model)"
             computerCoachEnabled = true
+            isConnectionLinkPending = false
             errorMessage = nil
             await refresh()
         } catch {
@@ -63,6 +70,7 @@ final class WellnessViewModel {
         RemoteCoachConfigurationStore.remove()
         computerCoachStatus = "Not connected"
         computerCoachEnabled = false
+        isConnectionLinkPending = false
         await refresh()
     }
 
@@ -70,7 +78,10 @@ final class WellnessViewModel {
         do {
             let configuration = try RemoteCoachConfiguration.parseConnectionLink(url)
             computerCoachURL = configuration.baseURL.absoluteString
-            await connectComputerCoach()
+            computerCoachStatus =
+                "Connection link loaded · review the address and tap Connect & Use"
+            isConnectionLinkPending = true
+            errorMessage = nil
         } catch {
             errorMessage = error.localizedDescription
         }
