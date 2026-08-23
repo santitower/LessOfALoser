@@ -1,0 +1,101 @@
+# LessOfALoser
+
+LessOfALoser is an iPhone prototype that combines Apple Health sleep and step data with a coarse Screen Time total, then generates a private daily wellness brief with Apple's on-device Foundation Models framework.
+
+The architecture deliberately keeps measurement and language generation separate:
+
+1. HealthKit and Device Activity provide user-authorized data.
+2. Swift calculates daily values and recent baselines.
+3. A deterministic rules layer creates a safe fallback.
+4. The on-device model explains only the verified summary.
+
+No personal health data belongs in this repository, and the starter contains no analytics or server integration.
+
+## Included
+
+- Read-only HealthKit authorization for sleep and steps
+- Sleep interval de-duplication across overlapping samples
+- Daily step totals using `HKStatisticsCollectionQuery`
+- Individual Screen Time authorization with Family Controls
+- Privacy-preserving `DeviceActivityReportExtension`
+- Coarse daily Screen Time sharing through a local App Group container
+- 28-day baseline comparisons in the platform-independent `WellnessCore` module
+- On-device Foundation Models coaching with a deterministic fallback
+- Swift unit tests and a GitHub Actions workflow
+
+## Requirements
+
+- Xcode 26 or newer
+- An iPhone running iOS 26 or newer
+- An Apple Developer team for device signing
+- An Apple Intelligence-compatible device with Apple Intelligence enabled for generated coaching
+- Apple approval for the Family Controls distribution entitlement before App Store or TestFlight distribution
+
+HealthKit and Device Activity should be tested on a physical iPhone. The deterministic `WellnessCore` package can be tested on macOS without Xcode.
+
+## Generate and open the project
+
+The repository uses [XcodeGen](https://github.com/yonaskolb/XcodeGen) so the project file is reproducible.
+
+```sh
+brew install xcodegen
+xcodegen generate
+open LessOfALoser.xcodeproj
+```
+
+In Xcode:
+
+1. Select your development team for the `PhoneLLM` and `ScreenTimeReport` targets.
+2. Replace the `com.santitower` bundle prefix if you do not control it.
+3. Register the `group.com.santitower.LessOfALoser` App Group for both targets.
+4. Enable HealthKit on the app target.
+5. Enable Family Controls on the app and report extension targets.
+6. Build to a physical iPhone and grant Health and Screen Time access.
+
+For distribution, request the Family Controls managed capability for both the app and report extension identifiers in the Apple Developer portal.
+
+## Run core tests
+
+```sh
+swift test
+```
+
+## Privacy boundary
+
+Screen Time is not a HealthKit database. Apple provides activity results inside a privacy-preserving report extension. This prototype stores only the aggregate number of daily activity minutes in a shared local App Group container. It does not persist app names, web domains, opaque application tokens, or raw activity events.
+
+Before distributing this pattern, confirm it against the current Apple Developer Program terms and App Review requirements. A production version should include an accessible privacy policy, deletion controls, safety evaluations, and a formal review of its wellness claims.
+
+## Safety boundary
+
+LessOfALoser is general wellness software. It must not:
+
+- diagnose or predict a condition;
+- monitor emergencies;
+- claim that Screen Time caused a sleep or activity change;
+- recommend medication, supplement, or treatment changes;
+- interpret missing data as a negative health signal.
+
+The model receives aggregated JSON facts rather than raw HealthKit samples. If the model is unavailable or refuses a request, the app displays a deterministic fallback.
+
+## Project layout
+
+```text
+PhoneLLM/                 SwiftUI app, HealthKit client, local coach
+ScreenTimeReport/         Device Activity report extension
+Sources/WellnessCore/     Shared models, trend engine, local snapshot store
+Tests/WellnessCoreTests/  Platform-independent tests
+project.yml               XcodeGen project definition
+```
+
+## Useful Apple documentation
+
+- [HealthKit](https://developer.apple.com/documentation/healthkit)
+- [Sleep analysis](https://developer.apple.com/documentation/healthkit/hkcategoryvaluesleepanalysis)
+- [Device Activity reports](https://developer.apple.com/documentation/deviceactivity/deviceactivityreportextension)
+- [Family Controls entitlement](https://developer.apple.com/documentation/familycontrols/requesting-the-family-controls-entitlement)
+- [Foundation Models](https://developer.apple.com/documentation/foundationmodels)
+
+## Contributing
+
+Group contributions are welcome. Create a branch from `main`, keep personal health exports out of commits and test fixtures, run `swift test`, and open a pull request describing the behavior change and its privacy impact.

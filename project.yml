@@ -1,0 +1,88 @@
+name: LessOfALoser
+options:
+  bundleIdPrefix: com.santitower
+  deploymentTarget:
+    iOS: "26.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    SWIFT_STRICT_CONCURRENCY: targeted
+    CODE_SIGN_STYLE: Automatic
+targets:
+  WellnessCore:
+    type: framework
+    platform: iOS
+    sources:
+      - Sources/WellnessCore
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.santitower.LessOfALoser.WellnessCore
+        GENERATE_INFOPLIST_FILE: true
+
+  PhoneLLM:
+    type: application
+    platform: iOS
+    sources:
+      - PhoneLLM
+    info:
+      path: PhoneLLM/Info.plist
+      properties:
+        CFBundleDisplayName: LessOfALoser
+        NSHealthShareUsageDescription: LessOfALoser reads your sleep and step data to create private, on-device wellness summaries.
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+        UILaunchScreen: {}
+    entitlements:
+      path: PhoneLLM/PhoneLLM.entitlements
+    dependencies:
+      - target: WellnessCore
+      - target: ScreenTimeReport
+        embed: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.santitower.LessOfALoser
+        PRODUCT_NAME: LessOfALoser
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+
+  ScreenTimeReport:
+    type: app-extension
+    platform: iOS
+    sources:
+      - ScreenTimeReport
+    info:
+      path: ScreenTimeReport/Info.plist
+      properties:
+        CFBundleDisplayName: LessOfALoser Screen Time Report
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.deviceactivityui.report-extension
+    entitlements:
+      path: ScreenTimeReport/ScreenTimeReport.entitlements
+    dependencies:
+      - target: WellnessCore
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.santitower.LessOfALoser.ScreenTimeReport
+        SKIP_INSTALL: true
+        APPLICATION_EXTENSION_API_ONLY: true
+
+  WellnessCoreTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - Tests/WellnessCoreTests
+    dependencies:
+      - target: WellnessCore
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: true
+
+schemes:
+  LessOfALoser:
+    build:
+      targets:
+        PhoneLLM: all
+        WellnessCoreTests: [test]
+    test:
+      targets:
+        - WellnessCoreTests
