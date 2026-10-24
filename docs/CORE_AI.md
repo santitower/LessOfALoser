@@ -22,7 +22,7 @@ The Personal AI screen uses the same Core AI resource discovery pattern but keep
 - The `coreai-models` Swift package from Apple.
 - An exported Core AI model resource folder.
 
-The Xcode project pins the immutable commit behind Apple's `coreai-models` 0.2.0 release. That release depends on the `main` branch of `xgrammar`, so SwiftPM rejects it when referenced as a stable semantic version; a revision pin keeps the dependency reproducible while allowing Apple's published package graph to resolve.
+The Xcode project pins the immutable commit behind Apple's `coreai-models` 1.0.0 release, the first release that builds with the final Xcode 27 SDK. Earlier releases depended on the `main` branch of `xgrammar`, which SwiftPM rejects for a stable semantic version, so the project uses a revision pin; it keeps the dependency reproducible either way.
 
 The proof of concept in `cmedipally7/iOSCoreMLPOC` reports an approximately 890 MB 4-bit Qwen 2.5 1.5B bundle on an iPhone 16 Pro Max. Treat that number as a device-specific observation, not a guaranteed production benchmark.
 
