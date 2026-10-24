@@ -15,6 +15,25 @@ jobs:
       - name: Run private gateway tests
         run: python3 -m unittest discover -s desktop_gateway/tests -v
 
+  web-demo:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web-demo
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web-demo/package-lock.json
+      - name: Install web review dependencies
+        run: npm ci
+      - name: Lint web review
+        run: npm run lint
+      - name: Build and test web review
+        run: npm test
+
   ios-build:
     runs-on: xcode-27
     steps:
